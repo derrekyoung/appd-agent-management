@@ -2,8 +2,13 @@
 
 A collection of scripts to handle agent downloads, installs and upgrades.
 
+## Getting Started
+Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases. Unzip and apply `chmod u+x *.sh` to the files in the directory so that your user can execute the scripts.
+
+# Functionality
+
 ## Install/Upgrade Agent Locally
-Operates on your local system. Install a brand new agent or upgrade a new agent in place.
+Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
 
 Usage: `./local-agent-install.sh AGENT_ARCHIVE`
 
