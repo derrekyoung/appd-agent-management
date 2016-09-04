@@ -28,6 +28,8 @@ main() {
     # Call Python Fabric to do remote management
     fab -f remote-agent-install.py deploy_agent:archive="$archive",appd_home_dir="$REMOTE_APPD_HOME"
 
+    rm remote-agent-install.pyc
+
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
     duration=$SECONDS
     echo "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
