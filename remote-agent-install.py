@@ -6,7 +6,10 @@
 #
 # Requirements:
 #   - Install Python Fabric on the machine that will run this script. *Not* required the remote servers.
-#     http://www.fabfile.org/installing.html
+#       http://www.fabfile.org/installing.html
+#       Ubuntu: sudo apt-get install fabric
+#       RHEL/CentOS: sudo yum install fabric
+#       Pip: sudo pip install fabric
 #   - Access to local-agent-install.sh in this same directory
 #
 # Version: _VERSION_
