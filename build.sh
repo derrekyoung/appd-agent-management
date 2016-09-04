@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.0-BETA"
+VERSION="0.2-BETA"
 
 
 
