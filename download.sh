@@ -4,6 +4,9 @@
 #
 # Useful for automating downloads or downloading directly onto a server.
 #
+# Version: _VERSION_
+# Author(s): _AUTHORS_
+#
 ################################################################################
 
 # You can choose to set your variables here or you can pass in the the variables
@@ -25,13 +28,10 @@ usage() {
     echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
 }
 
-download() {
-    echo "Downloading $URL as $EMAIL"
-
-    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
-    curl -L -O -b cookies.txt $URL
-
-    rm cookies.txt
+main() {
+    prompt-for-credentials
+    build-url
+    download
 }
 
 prompt-for-credentials() {
@@ -57,11 +57,22 @@ prompt-for-credentials() {
         done
         echo
     fi
+}
 
+build-url() {
     if [[ -z "$URL" ]]; then
         echo -n "Enter the AppDynamics download URL: "
         read URL
     fi
+}
+
+download() {
+    echo "Downloading $URL as $EMAIL"
+
+    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
+    curl -L -O -b cookies.txt $URL
+
+    rm cookies.txt
 }
 
 
@@ -89,5 +100,4 @@ do
     esac
 done
 
-prompt-for-credentials
-download
+main

@@ -2,7 +2,15 @@
 
 ################################################################################
 #
-# Helper script to deploy AppDynamics agents onto remote servers via Python Fabric.
+# Utility script to deploy AppDynamics agents onto remote servers via Python Fabric.
+#
+# Requirements:
+#   - Install Python Fabric on the machine that will run this script. *Not* required the remote servers.
+#     http://www.fabfile.org/installing.html
+#   - Access to local-agent-install.sh in this same directory
+#
+# Version: _VERSION_
+# Author(s): _AUTHORS_
 #
 ################################################################################
 

@@ -1,14 +1,19 @@
 #!/bin/bash
 
 ################################################################################
+#
 # Bash script to install/update/manage local agents. Will sync:
 #   controller-info.xml
 #   extensions
 #   runbook automation scripts
-#   Analytics agent props
+#   analytics agent props
 #
 # Requirements:
-#   unzip utility installed
+#   - unzip utility installed
+#   - user access to the AppDynamics Home directory, APPD_AGENT_HOME
+#
+# Version: _VERSION_
+# Author(s): _AUTHORS_
 #
 ################################################################################
 
@@ -54,7 +59,8 @@ main() {
     copy-controller-info
 
 
-    # TODO Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
+    # Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
+    copy-extensions
 
     # Sync runbook automation scripts in MACHINE_AGENT/local-scripts
 	copy-local-scripts
@@ -144,6 +150,26 @@ copy-controller-info() {
 
     copy-file "controller-info.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
     copy-file "custom-activity-correlation.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
+}
+
+# Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
+copy-extensions() {
+    if [ -d "$oldAgentInstallDirectory/monitors/" ]; then
+        dirs=$(ls -d $oldAgentInstallDirectory/monitors/*)
+        for dir in $dirs
+        do
+            if [[ $dir != *"analytics-agent"* ]] \
+            && [[ $dir != *"JavaHardwareMonitor"* ]] \
+            && [[ $dir != *"HardwareMonitor"* ]] \
+            && [[ $dir != *"ServerMonitoringPro"* ]]; then
+                # echo "Not copying monitors: analytics-agent, HardwareMonitor, JavaHardwareMonitor";
+                # echo $dir
+                local basenameDir=$(basename $dir)
+                log-info "Copying extension from $oldAgentInstallDirectory/monitors/$basenameDir/ to $newAgentInstallDirectory/monitors/$basenameDir/"
+                cp -R "$oldAgentInstallDirectory/monitors/$basenameDir/" "$newAgentInstallDirectory/monitors/$basenameDir/"
+            fi
+        done
+    fi
 }
 
 copy-local-scripts() {
