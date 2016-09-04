@@ -22,10 +22,12 @@ usage() {
     echo "    -e= AppDynamics username"
     echo "    -p= AppDynamics password"
     echo "    -u= AppDynamics download URL"
-    echo "Pass in zero artuments to be prompted or set the variables at the top of this script to have default variables."
+    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
 }
 
 download() {
+    echo "Downloading $URL as $EMAIL"
+
     curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
     curl -L -O -b cookies.txt $URL
 
@@ -42,7 +44,18 @@ prompt-for-credentials() {
     # if password empty then prompt
     if [[ -z "$PASSWORD" ]]; then
         echo -n "Enter your AppDynamics password: "
-        read PASSWORD
+        # read -s PASSWORD
+        unset PASSWORD
+        while IFS= read -p "$prompt" -r -s -n 1 char
+        do
+            if [[ $char == $'\0' ]]
+            then
+                break
+            fi
+            prompt='*'
+            PASSWORD+="$char"
+        done
+        echo
     fi
 
     if [[ -z "$URL" ]]; then
@@ -52,6 +65,7 @@ prompt-for-credentials() {
 }
 
 
+# Grab arguments in case there are any
 for i in "$@"
 do
     case $i in
