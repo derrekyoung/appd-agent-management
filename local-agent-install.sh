@@ -162,8 +162,6 @@ copy-extensions() {
             && [[ $dir != *"JavaHardwareMonitor"* ]] \
             && [[ $dir != *"HardwareMonitor"* ]] \
             && [[ $dir != *"ServerMonitoringPro"* ]]; then
-                # echo "Not copying monitors: analytics-agent, HardwareMonitor, JavaHardwareMonitor";
-                # echo $dir
                 local basenameDir=$(basename $dir)
                 log-info "Copying extension from $oldAgentInstallDirectory/monitors/$basenameDir/ to $newAgentInstallDirectory/monitors/$basenameDir/"
                 cp -R "$oldAgentInstallDirectory/monitors/$basenameDir/" "$newAgentInstallDirectory/monitors/$basenameDir/"
