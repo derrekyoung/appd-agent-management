@@ -23,16 +23,25 @@ from xml.etree import ElementTree as et
 import os, time, sys, re, ntpath
 
 
+# Docs on how to sconfigure Fabric for custom deployments
+# http://docs.fabfile.org/en/1.12/usage/execution.html
+# http://docs.fabfile.org/en/1.12/usage/env.html
+# http://docs.fabfile.org/en/1.12/usage/execution.html#password-management
+
 # remote hosts
-env.hosts = [
-    'server1'
-    ,'server2'
-]
+# env.hosts = [
+#     'root@server1'
+#     ,'appdynamics@server2'
+#     ,'ubuntu@server3'
+#     ,'jsmith@server4'
+# ]
 # remote ssh credentials
-env.user = 'ubuntu'
-env.password = 'password' #ssh password for user
+env.user = 'appd' # Default, implicit user
+# Must provide password or SSH key but not both at the same time
+# env.password = 'password' # Default ssh password for user
+# env.passwords = ['pass1','pass2'] # List of passwords to try
 # or, specify path to server public key here:
-# env.key_filename = './my-key.pem'
+# env.key_filename = ['./my-key1.pem','./my-key2.pem'] # List of SSH keys to try
 
 
 agent_install_script_path = 'local-agent-install.sh'
@@ -41,7 +50,7 @@ agent_install_script_path = 'local-agent-install.sh'
 ################################################################################
 
 # Upload and install the agent
-@parallel(pool_size=10)
+# @parallel(pool_size=10)
 def deploy_agent(archive, appd_home_dir):
     # Quick sanity check
     validate_file(archive)
