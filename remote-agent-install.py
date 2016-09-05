@@ -59,6 +59,8 @@ def deploy_agent(archive, appd_home_dir):
     if not exists(appd_home_dir, use_sudo=True):
         create_appd_home_dir(env.user, appd_home_dir)
 
+    print('INFO:  Installing AppDyanmics agent into '+appd_home_dir)
+
     # Upload the agent install script
     upload_file(agent_install_script_path, appd_home_dir)
     chmod_script( ntpath.basename(agent_install_script_path), appd_home_dir)
@@ -77,7 +79,7 @@ def deploy_agent(archive, appd_home_dir):
     # Delete the installer script
     delete(ntpath.basename(agent_install_script_path), appd_home_dir)
 
-    print('INFO: Agent deployment finished.')
+    print('INFO:  Agent deployment finished.')
 
 @parallel(pool_size=100)
 def create_appd_home_dir(user, appd_home_dir):
@@ -111,9 +113,9 @@ def delete(file, dir):
 @parallel(pool_size=100)
 def validate_file(file):
     if not file:
-        print('INFO:  USAGE: fab deploy_agent ./AppServerAgent-4.2.5.1.zip')
+        print('INFO:\n  USAGE: fab deploy_agent ./AppServerAgent-4.2.5.1.zip')
         sys.exit()
 
     if not os.path.isfile(file):
-        print('INFO:  ERROR: file to find '+file)
+        print('INFO:\n  ERROR: file to find '+file)
         sys.exit()
