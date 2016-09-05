@@ -9,7 +9,7 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 # Do not edit below this line
 ###############################################################################
 
-FILES=("README.md" \
+declare -a FILES=("README.md" \
     "download.sh" \
     "local-agent-install.sh" \
     "remote-agent-install.sh" \
