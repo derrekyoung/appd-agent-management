@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.3-BETA"
+VERSION="0.4-BETA"
 AUTHORS="Derrek Young, Eli Rodriguez"
 
 
