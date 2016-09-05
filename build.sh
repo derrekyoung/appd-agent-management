@@ -39,17 +39,21 @@ replace-build-variables() {
 }
 
 dist() {
+    echo -e "INFO:  Building version $VERSION"
+
+    # Remove the existing dist dir
     if [ -d "$DIST_DIR" ]; then
         echo "INFO:  Cleaning dist/ directory"
         rm -R $DIST_DIR
     fi
 
+    # Make the dist dir
     if [ ! -d "$DIST_DIR" ]; then
         echo "INFO:  Making dist/ directory"
         mkdir $DIST_DIR
     fi
 
-    # Create a top-level folder for when unzipping the archive
+    # Create a top-level folder for unzipping the archive
     echo "INFO:  Making $ZIP_DIR"
     mkdir -p $ZIP_DIR
 
@@ -61,7 +65,7 @@ dist() {
     cd $DIST_DIR/
     zip -r $DISTRIBUTABLE_NAME $DIST_TOP_FOLDER/
 
-    echo "INFO:  Finished. $ZIP_DIR/$DISTRIBUTABLE_NAME"
+    echo "INFO:  Finished $ZIP_DIR/$DISTRIBUTABLE_NAME"
 }
 
 dist
