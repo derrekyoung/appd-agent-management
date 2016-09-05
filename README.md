@@ -10,7 +10,8 @@ Supports:
 Will sync controller info, account info, and Analytics agent connection details underneath the Machine Agent.
 
 ## Getting Started
-Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases. Unzip the release and run `chmod u+x *.sh` on the files in the release directory so that your user can execute the scripts.
+1. Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases/latest
+1. Unzip the release and run `chmod u+x *.sh` on the files in the release directory so that your user can execute the scripts.
 
 # Functionality
 
