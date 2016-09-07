@@ -28,8 +28,24 @@ DEBUG_LOGS=true
 
 ################################################################################
 
+# The agent archive to install/upgrade. Best to pass this in as an argument
+ARCHIVE=""
+
+usage() {
+    echo "Usage: $0 [-a=path to agent archive] [-h=AppD home]"
+    echo "Install/upgrade AppDynamics agents."
+    echo "Optional params:"
+    echo "    -a= Agent archive"
+    echo "    -h= Local AppDynamics home directory"
+    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
+}
+
 main() {
-    local inputFile="$1"
+    parse-args "$@"
+    prompt-for-args
+    validate-args
+
+    local inputFile="$ARCHIVE"
     log-info "Installing $inputFile"
 
     # validate-arguments "$@"
@@ -69,11 +85,64 @@ main() {
     sync-analytics-agent
 
     # Delete old symlink and create new one
-    handle-symlink "$fileAndVersionLowercase" "$fileNameOnly"
+    handle-symlink "$APPD_AGENT_HOME" "$fileAndVersionLowercase" "$fileNameOnly"
 }
 
-display_usage() {
-	echo -e "Usage:\n$0 [agent filename] \n"
+parse-args() {
+    # Grab arguments in case there are any
+    for i in "$@"
+    do
+        case $i in
+            -a=*|--archive=*)
+                ARCHIVE="${i#*=}"
+                shift # past argument=value
+                ;;
+            -h=*|--appdhome=*)
+                APPD_AGENT_HOME="${i#*=}"
+                shift # past argument=value
+                ;;
+            *)
+                log-error "Error parsing argument $1" >&2
+                usage
+                exit 1
+            ;;
+        esac
+    done
+}
+
+prompt-for-args() {
+    # if empty then prompt
+    while [[ -z "$ARCHIVE" ]]
+    do
+        log-info "Enter the path to the AppDynamics agent archive: "
+        read ARCHIVE
+
+        if [[ ! -f "$ARCHIVE" ]]; then
+            log-warn "Archive file not found, $ARCHIVE"
+            ARCHIVE=""
+        fi
+    done
+
+    # if empty then prompt
+    while [[ -z "$APPD_AGENT_HOME" ]]
+    do
+        log-info "Enter the remote AppDyanmics home/install directory: "
+        read APPD_AGENT_HOME
+    done
+}
+
+validate-args() {
+    if [[ ! -f "$ARCHIVE" ]]; then
+        log-error "Archive file not found, $ARCHIVE"
+        usage
+        exit 1
+    fi
+
+    # Verify that APPD_AGENT_HOME is set
+    if [[ -z "$APPD_AGENT_HOME" ]]; then
+        log-error "You must set the remote AppDyanmics home directory"
+        exit 1
+    fi
 }
 
 # This will set a bunch fo GLOBAL variables
@@ -251,8 +320,9 @@ sync-analytics-agent() {
 }
 
 handle-symlink() {
-    local directory="$1"
-    local symlink="$2"
+    local parentDirectory="$1"
+    local directory="$2"
+    local symlink="$3"
 
     # Remove existing symlink
     if [ -d "$symlink" ]; then
@@ -267,6 +337,10 @@ handle-symlink() {
 
 log-info() {
     echo -e "INFO:  $1"
+}
+
+log-warn() {
+    echo -e "WARN:  $1"
 }
 
 log-debug() {
@@ -286,9 +360,6 @@ check-file-exists() {
         exit 1
     fi
 }
-
-# Check for arguments passed in
-[ $# -eq 0 ] && { display_usage; exit 1; }
 
 # Execute the main function and get started
 main "$@"
