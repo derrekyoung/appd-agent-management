@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.4-BETA"
+VERSION="0.5-BETA"
 AUTHORS="Derrek Young, Eli Rodriguez"
 
 
@@ -13,7 +13,8 @@ declare -a FILES=("README.md" \
     "download.sh" \
     "local-agent-install.sh" \
     "remote-agent-install.sh" \
-    "remote-agent-install.py")
+    "fabfile.py" \
+    "config-sample.json")
 
 DIST_DIR="./dist"
 DIST_TOP_FOLDER="appd-agent-management-$VERSION"
