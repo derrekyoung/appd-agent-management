@@ -117,8 +117,10 @@ copy-controller-info() {
     #
     # Copy existing AGENT_HOME/conf/controller-info.xml
     #
-    copy-file "controller-info.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
-    copy-file "custom-interceptors.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
+    if [ -d "$oldAgentInstallDirectory/conf" ]; then
+        copy-file "controller-info.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
+        copy-file "custom-interceptors.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
+    fi
 
     #
     # Copy existing AGENT_HOME/verNNN/conf/controller-info.xml
@@ -148,8 +150,10 @@ copy-controller-info() {
 		fi
 	fi
 
-    copy-file "controller-info.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
-    copy-file "custom-activity-correlation.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
+    if [ -d "$oldAgentVersionPath/conf" ]; then
+        copy-file "controller-info.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
+        copy-file "custom-activity-correlation.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
+    fi
 }
 
 # Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
@@ -203,27 +207,45 @@ sync-analytics-agent() {
             log-info "Analytics is enabled. Copying existing Analytics Agent props"
 
 			# Using perl to pull the existing values from the configs
-			# local machineAgentAnalyticsEndPoint=$(perl -ne '/^http.event.endpoint=(.*)/ && print "$1";' "$pathToOrigAnalyticsProperties")
-            local machineAgentAnalyticsEndPoint=$(grep 'http.event.endpoint=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
+			local machineAgentAnalyticsEndPoint=$(grep 'http.event.endpoint=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
             log-debug "machineAgentAnalyticsEndPoint=$machineAgentAnalyticsEndPoint"
 
-            # local machineAgentAnalyticsAccountName=$(perl -ne '/^http.event.accountName=(.*)/ && print "$1";' "$pathToOrigAnalyticsProperties")
             local machineAgentAnalyticsAccountName=$(grep 'http.event.accountName=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
             log-debug "machineAgentAnalyticsAccountName=$machineAgentAnalyticsAccountName"
 
-            # local machineAgentAnalyticsAccessKey=$(perl -ne '/^http.event.accessKey=(.*)/ && print "$1";' "$pathToOrigAnalyticsProperties")
             local machineAgentAnalyticsAccessKey=$(grep 'http.event.accessKey=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
             log-debug "machineAgentAnalyticsAccessKey=$machineAgentAnalyticsAccessKey"
+
+
+            local machineAgentAnalyticsProxyHost=$(grep 'http.event.proxyHost=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
+            log-debug "machineAgentAnalyticsProxyHost=$machineAgentAnalyticsProxyHost"
+
+            local machineAgentAnalyticsProxyPort=$(grep 'http.event.proxyPort=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
+            log-debug "machineAgentAnalyticsProxyPort=$machineAgentAnalyticsProxyPort"
+
+            local machineAgentAnalyticsProxyUsername=$(grep 'http.event.proxyUsername=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
+            log-debug "machineAgentAnalyticsProxyUsername=$machineAgentAnalyticsProxyUsername"
+
+            local machineAgentAnalyticsProxyPassword=$(grep 'http.event.proxyPassword=' "$pathToOrigAnalyticsProperties"| awk -F= '{print $2}')
+            log-debug "machineAgentAnalyticsProxyPassword=$machineAgentAnalyticsProxyPassword"
 
 
 			# Using sed to update the new config files with appropriate values taken from the original machine agent configs
 			log-info "Updating the Analytics Agent configs"
 
-			sed -i.bak -e "s%http.event.endpoint=.*%http.event.endpoint=$machineAgentAnalyticsEndPoint%g" -e \
-						  "s/http.event.accountName=.*/http.event.accountName=$machineAgentAnalyticsAccountName/g" -e \
-						  "s/http.event.accessKey=.*/http.event.accessKey=$machineAgentAnalyticsAccessKey/g" \
-						  "$pathToNewAnalyticsProperties"
-			sed -i.bak -e "s/<enabled>.*<\/enabled>/<enabled>true<\/enabled>/g" "$pathToNewAnalyticsMonitorConfig"
+			sed -i -e "s%http.event.endpoint=.*%http.event.endpoint=$machineAgentAnalyticsEndPoint%g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.accountName=.*/http.event.accountName=$machineAgentAnalyticsAccountName/g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.accessKey=.*/http.event.accessKey=$machineAgentAnalyticsAccessKey/g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.proxyHost=.*/http.event.proxyHost=$machineAgentAnalyticsProxyHost/g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.proxyPort=.*/http.event.proxyPort=$machineAgentAnalyticsProxyPort/g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.proxyUsername=.*/http.event.proxyUsername=$machineAgentAnalyticsProxyUsername/g" "$pathToNewAnalyticsProperties"
+			sed -i -e "s/http.event.proxyPassword=.*/http.event.proxyPassword=$machineAgentAnalyticsProxyPassword/g" "$pathToNewAnalyticsProperties"
+
+			sed -i -e "s/<enabled>.*<\/enabled>/<enabled>true<\/enabled>/g" "$pathToNewAnalyticsMonitorConfig"
+
+            if [[ -f "$pathToNewAnalyticsProperties-e" ]]; then
+                rm -rf "$pathToNewAnalyticsProperties-e"
+            fi
         fi
     fi
 }
