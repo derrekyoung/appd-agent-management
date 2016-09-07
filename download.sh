@@ -29,9 +29,36 @@ usage() {
 }
 
 main() {
+    parse-args "$@"
     prompt-for-credentials
     build-url
     download
+}
+
+parse-args() {
+    # Grab arguments in case there are any
+    for i in "$@"
+    do
+        case $i in
+            -e=*|--email=*)
+                EMAIL="${i#*=}"
+                shift # past argument=value
+                ;;
+            -p=*|--password=*)
+                PASSWORD="${i#*=}"
+                shift # past argument=value
+                ;;
+            -u=*|--url=*)
+                URL="${i#*=}"
+                shift # past argument=value
+                ;;
+            *)
+                echo "Error parsing argument $1" >&2
+                usage
+                exit 1
+            ;;
+        esac
+    done
 }
 
 prompt-for-credentials() {
@@ -75,29 +102,4 @@ download() {
     rm cookies.txt
 }
 
-
-# Grab arguments in case there are any
-for i in "$@"
-do
-    case $i in
-        -e=*|--email=*)
-            EMAIL="${i#*=}"
-            shift # past argument=value
-            ;;
-        -p=*|--password=*)
-            PASSWORD="${i#*=}"
-            shift # past argument=value
-            ;;
-        -u=*|--url=*)
-            URL="${i#*=}"
-            shift # past argument=value
-            ;;
-        *)
-            echo "Error parsing argument $1" >&2
-            usage
-            exit 1
-        ;;
-    esac
-done
-
-main
+main "$@"
