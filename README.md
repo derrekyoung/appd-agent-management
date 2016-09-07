@@ -6,6 +6,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 * Install/upgrade the Java agent
     * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories.
     * Will sync custom-activity-correlation.xml, custom-interceptors.xml
+    * *NOTE*: You'll want the Java app server startup script to point to the javaagent.jar underneath the synlink.
 * Install/upgrade the Machine agent
     * Will sync controller-info.xml underneath the conf/ directory.
     * Sync extensions
@@ -15,7 +16,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
     * Will sync controller-info.xml underneath the conf/ directory.
 
 ## Requirements
-* Linux only
+* Supported on Linux/OSX/Unix only
 * Python 2.7+ on the central operator/distribution server
 * Python Fabric on the central operator/distribution server
 * Unzip utility available on the destination servers
