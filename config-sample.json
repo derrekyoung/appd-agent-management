@@ -1,9 +1,9 @@
 {
     "__comments" : [
-        "user: The default, implicit username for the remote hosts. Use this if all usernames will be the same"
-        ,"passwords: You will be prompted for passwords interactively"
-        ,"key_filename: A list of SSH keys to try on the remote hosts"
-        ,"hosts: A list of remote hosts. Can be in the format of simple hostnames or as username@hostname where you specify an explicit username to override the default username"
+        "user: (optional) The default, implicit username for the remote hosts. Use this if all usernames will be the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME"
+        ,"passwords: You will be prompted for passwords interactively. Do not enter them here"
+        ,"key_filename: (optional) A list of SSH keys to access the remote hosts"
+        ,"hosts: REQUIRED A list of remote hosts. Can be in the format of simple hostnames or as username@hostname where you specify an explicit username to override the default username"
     ]
     ,"user": "user1"
     ,"key_filename": [
