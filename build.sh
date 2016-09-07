@@ -34,7 +34,11 @@ replace-build-variables() {
         sed -i -e "s/DEBUG_LOGS=true/DEBUG_LOGS=false/g" "$ZIP_DIR/$file"
         sed -i -e "s/_VERSION_/$VERSION/g" "$ZIP_DIR/$file"
         sed -i -e "s/_AUTHORS_/$AUTHORS/g" "$ZIP_DIR/$file"
-        rm "$DIST_DIR/$DIST_TOP_FOLDER/$file-e" # This is hacky, but I'm not sure why SED is adding the -e. Doesn't work if I remove the -e
+
+        # Differences between Mac and Linux. Mac doesn't know the '-e'
+        if [[ -f "$ZIP_DIR/$file-e" ]]; then
+            rm "$ZIP_DIR/$file-e"
+        fi
     done
 }
 
