@@ -20,7 +20,7 @@
 from fabric.api import *
 from fabric.contrib.files import exists
 from xml.etree import ElementTree as et
-import os, time, sys, re, ntpath
+import os, time, sys, re, ntpath, json
 
 
 # Docs on how to sconfigure Fabric for custom deployments
@@ -51,6 +51,7 @@ agent_install_script_path = 'local-agent-install.sh'
 
 # Upload and install the agent
 # @parallel(pool_size=10)
+# @task(default=True)
 def deploy_agent(archive, appd_home_dir):
     # Quick sanity check
     validate_file(archive)
@@ -119,3 +120,35 @@ def validate_file(file):
     if not os.path.isfile(file):
         print('INFO:\n  ERROR: file to find '+file)
         sys.exit()
+
+@task
+def check_host():
+    run('echo "Host is valid"')
+
+@task
+def do_work():
+    run('echo "Doing work"')
+
+
+@task
+def set_env(env_str):
+    file = 'config-'+str(env_str)+'.json'
+
+    with open(file, 'r') as json_data:
+        env_data = json.load(json_data)
+        json_data.close()
+
+        if env_data.get('user'):
+            env.user = env_data.get('user')
+            print(env.user)
+
+        if env_data.get('key_filename'):
+            env.key_filename = env_data.get('key_filename')
+            print(env.key_filename)
+
+        if env_data.get('hosts'):
+            env.hosts = env_data.get('hosts')
+            print(env.hosts)
+        else:
+            print('ERROR: You must define hosts in your JSON config file')
+            exit
