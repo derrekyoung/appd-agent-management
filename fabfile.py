@@ -52,6 +52,7 @@ agent_install_script_path = 'local-agent-install.sh'
 # Upload and install the agent
 # @parallel(pool_size=10)
 # @task(default=True)
+@task
 def deploy_agent(archive, appd_home_dir):
     # Quick sanity check
     validate_file(archive)
@@ -80,7 +81,7 @@ def deploy_agent(archive, appd_home_dir):
     # Delete the installer script
     delete(ntpath.basename(agent_install_script_path), appd_home_dir)
 
-    print('INFO:  Agent deployment finished.')
+    print('INFO:  Agent deployment finished.\n\n')
 
 @parallel(pool_size=100)
 def create_appd_home_dir(user, appd_home_dir):
@@ -102,9 +103,9 @@ def chmod_script(file, dir):
         run('chmod u+x '+file)
 
 @parallel(pool_size=10)
-def install_agent(file, appd_home, script):
+def install_agent(archive, appd_home, script):
     with cd(appd_home):
-        run('./'+script+' '+file)
+        run('./'+script+' -a='+archive+' -h='+appd_home)
 
 @parallel(pool_size=100)
 def delete(file, dir):
@@ -114,7 +115,7 @@ def delete(file, dir):
 @parallel(pool_size=100)
 def validate_file(file):
     if not file:
-        print('INFO:\n  USAGE: fab deploy_agent ./AppServerAgent-4.2.5.1.zip')
+        print('INFO:\n  USAGE: fab deploy_agent deploy_agent:archive=test,appd_home_dir=./AppServerAgent-4.2.5.1.zip')
         sys.exit()
 
     if not os.path.isfile(file):
@@ -126,11 +127,6 @@ def check_host():
     run('echo "Host is valid"')
 
 @task
-def do_work():
-    run('echo "Doing work"')
-
-
-@task
 def set_env(env_str):
     file = 'config-'+str(env_str)+'.json'
 
@@ -140,15 +136,12 @@ def set_env(env_str):
 
         if env_data.get('user'):
             env.user = env_data.get('user')
-            print(env.user)
 
         if env_data.get('key_filename'):
             env.key_filename = env_data.get('key_filename')
-            print(env.key_filename)
 
         if env_data.get('hosts'):
             env.hosts = env_data.get('hosts')
-            print(env.hosts)
         else:
             print('ERROR: You must define hosts in your JSON config file')
             exit

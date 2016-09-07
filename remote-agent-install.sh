@@ -14,131 +14,139 @@
 #
 ################################################################################
 
-####### Connection Information #######
-# Your remote hosts in the form of username@hostname
-declare -a REMOTE_HOSTS=("ubuntu@demosim" \
-"foobar@google.com")
-
-# You must provide password or SSH key but **not both** at the same time. http://docs.fabfile.org/en/1.12/usage/execution.html#password-management
-REMOTE_PASSWORD_PROMPT=true
-# REMOTE_SSH_KEY="./archives/my-key.pem"
-
-
-####### AppDyanamics Information #######
-# Where to install AppDynamics
-REMOTE_APPD_HOME="/opt/AppDynamics/"
-
 # Flag to toggle debug logging. Values= true|false
 DEBUG_LOGS=true
 
+# Environment deployment config
+ENV=""
+
+# Where to install AppDynamics
+REMOTE_APPD_HOME="/opt/AppDynamics/"
+
+
+
 ################################################################################
 
-main() {
-    local archive=$1 # Agent archive name
-    declare CREDENTIALS="" # Global var to hold credentials
+# The agent archive to install/upgrade. Best to pass this in as an argument
+ARCHIVE=""
 
-    validate-input "$@"
-    validate-appd-home
-    validate-hosts ${REMOTE_HOSTS[@]}
-    validate-and-build-credentials
+usage() {
+    echo "Usage: $0 [-e=environment] [-a=path to agent archive] [-h=AppD home]"
+    echo "Install/upgrade AppDynamics agents."
+    echo "Optional params:"
+    echo "    -e= Deployment environment config"
+    echo "    -a= Agent archive"
+    echo "    -h= Remote AppDynamics home directory"
+    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
+}
+
+main() {
+    parse-args "$@"
+    prompt-for-args
+    validate-args
 
     startDate=$(date '+%Y-%m-%d %H:%M:%S')
     SECONDS=0
     log-info "Started:  $startDate"
 
     # Call Python Fabric to do remote management
-    fab -f remote-agent-install.py --hosts "$REMOTE_HOSTS" "$CREDENTIALS" deploy_agent:archive="$archive",appd_home_dir="$REMOTE_APPD_HOME"
+    fab set_env:"$ENV" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME"
 
     # Clean up the compiled file
-    rm remote-agent-install.pyc
+    rm -f fabfile.pyc
 
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
     duration=$SECONDS
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
 }
 
-validate-appd-home() {
+parse-args() {
+    # Grab arguments in case there are any
+    for i in "$@"
+    do
+        case $i in
+            -e=*|--environment=*)
+                ENV="${i#*=}"
+                shift # past argument=value
+                ;;
+            -a=*|--archive=*)
+                ARCHIVE="${i#*=}"
+                shift # past argument=value
+                ;;
+            -h=*|--appdhome=*)
+                REMOTE_APPD_HOME="${i#*=}"
+                shift # past argument=value
+                ;;
+            *)
+                log-error "Error parsing argument $1" >&2
+                usage
+                exit 1
+            ;;
+        esac
+    done
+}
+
+prompt-for-args() {
+    # if empty then prompt
+    while [[ -z "$ENV" ]]
+    do
+        log-info "Enter the environment config name: "
+        read ENV
+
+        local ENV_FILE="./config-$ENV.json"
+        if [[ ! -f "$ENV_FILE" ]]; then
+            log-warn "Environment file not found, $ENV_FILE"
+            ENV=""
+        fi
+    done
+
+    # if empty then prompt
+    while [[ -z "$ARCHIVE" ]]
+    do
+        log-info "Enter the path to the AppDynamics agent archive: "
+        read ARCHIVE
+
+        if [[ ! -f "$ARCHIVE" ]]; then
+            log-warn "Archive file not found, $ARCHIVE"
+            ARCHIVE=""
+        fi
+    done
+
+    # if empty then prompt
+    while [[ -z "$REMOTE_APPD_HOME" ]]
+    do
+        log-info "Enter the remote AppDyanmics home/install directory: "
+        read REMOTE_APPD_HOME
+    done
+}
+
+validate-args() {
+    local ENV_FILE="./config-$ENV.json"
+    if [[ ! -f "$ENV_FILE" ]]; then
+        log-error "Environment file not found, $ENV_FILE"
+        usage
+        exit 1
+    fi
+
+    if [[ ! -f "$ARCHIVE" ]]; then
+        log-error "Archive file not found, $ARCHIVE"
+        usage
+        exit 1
+    fi
+
     # Verify that REMOTE_APPD_HOME is set
-    if [[ -z ${REMOTE_APPD_HOME+x} ]]; then
+    if [[ -z "$REMOTE_APPD_HOME" ]]; then
         log-error "You must set the remote AppDyanmics home directory"
         exit 1
     fi
 }
 
-validate-and-build-credentials() {
-    # Verify that we have either REMOTE_SSH_KEY or REMOTE_PASSWORD_PROMPT set
-    if [[ ! -z ${REMOTE_SSH_KEY+x} ]]; then
-        if [ ! -f "$REMOTE_SSH_KEY" ]; then
-            log-error "File not found, $REMOTE_SSH_KEY"
-            exit 1
-        fi
-
-         CREDENTIALS="-i $REMOTE_SSH_KEY"
-
-    elif [[ ! -z ${REMOTE_PASSWORD_PROMPT+x} ]]; then
-         CREDENTIALS="--initial-password-prompt"
-
-    else
-        log-error "You must set the SSH key or password prompt"
-        exit 1
-    fi
-
-    log-debug "CREDENTIALS=$CREDENTIALS"
-}
-
-validate-input() {
-    # Check for arguments passed in
-    if [[ $# -eq 0 ]] ; then
-        echo -e "Usage:\n   ./`basename "$0"` <PATH_TO_AGENT_ARCHIVE> \n"
-        exit 0
-    fi
-
-    if [ ! -f "$1" ]; then
-        log-error "File not found, $1"
-        exit 1
-    fi
-}
-
-validate-hosts() {
-    local hosts=${REMOTE_HOSTS[@]}
-    # echo "All Hosts: ${REMOTE_HOSTS[@]}"
-
-    # Verify that REMOTE_HOSTS is set
-    if [[ -z ${REMOTE_HOSTS+x} ]]; then
-        log-error "You must define the list of hosts"
-        exit 1
-    fi
-
-    for host in "${REMOTE_HOSTS[@]}"
-    do
-        # echo "Testing $host"
-        validate-host $host
-    done
-}
-
-validate-host() {
-    local userHostCombo=$1
-
-    IFS='@' read username hostname <<< "$userHostCombo"
-    # echo "username=$username, hostname=$hostname"
-
-    ping-test $hostname
-}
-
-ping-test() {
-    local hostname=$1
-
-    count=$( ping -c 1 $hostname | grep icmp* | wc -l )
-    if [ $count -eq 0 ]; then
-      log-error "Unable to ping $hostname"
-      exit 1
-    else
-      log-info "Successful ping to $hostname"
-    fi
-}
-
 log-info() {
     echo -e "INFO:  $1"
+}
+
+log-warn() {
+    echo -e "WARN:  $1"
 }
 
 log-debug() {
