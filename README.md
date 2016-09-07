@@ -5,6 +5,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 ## Supports:
 * Install/upgrade the Java agent
     * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories.
+    * Will sync custom-activity-correlation.xml, custom-interceptors.xml
 * Install/upgrade the Machine agent
     * Will sync controller-info.xml underneath the conf/ directory.
     * Sync extensions
