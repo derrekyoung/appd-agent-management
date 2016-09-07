@@ -1,0 +1,20 @@
+{
+    "__comments" : [
+        "user: The default, implicit username for the remote hosts. Use this if all usernames will be the same"
+        ,"passwords: You will be prompted for passwords interactively"
+        ,"key_filename: A list of SSH keys to try on the remote hosts"
+        ,"hosts: A list of remote hosts. Can be in the format of simple hostnames or as username@hostname where you specify an explicit username to override the default username"
+    ]
+    ,"user": "user1"
+    ,"key_filename": [
+        "./my-key1.pem"
+        ,"./my-key2.pem"
+    ]
+    ,"hosts": [
+        "root@server5.internal.mycompany.org"
+        ,"appdynamics@server6"
+        ,"ubuntu@server7.us"
+        ,"jsmith@server8.co"
+        ,"server9.example.com"
+    ]
+}
