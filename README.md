@@ -1,17 +1,29 @@
 # AppDynamics Agent Management
 
-A collection of scripts to handle agent downloads, installs and upgrades.
+A collection of scripts to handle agent downloads, installs and upgrades. Will sync controller info, account info, and Analytics agent info.
 
-Supports:
-* Java agent
-* Machine agent
-* DB agent
+## Supports:
+* Install/upgrade the Java agent
+    * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories.
+* Install/upgrade the Machine agent
+    * Will sync controller-info.xml underneath the conf/ directory.
+    * Sync extensions
+* Install/upgrade the Analytics agent within the Machine agent
+    * Sync properties for the Analytics agent (endpoint, account name, access key, proxy info)
+* Install/upgrade the DB agent
+    * Will sync controller-info.xml underneath the conf/ directory.
 
-Will sync controller info, account info, and Analytics agent connection details underneath the Machine Agent.
+## Requirements
+* Linux only
+* Python 2.7+ on the central operator/distribution server
+* Python Fabric on the central operator/distribution server
+* Unzip utility available on the destination servers
 
-## Getting Started
+# Getting Started
 1. Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases/latest
 1. Unzip the release and run `chmod u+x *.sh` on the files in the release directory so that your user can execute the scripts.
+1. Execute local installs/upgrades by running `local-agent-install.sh`. See below.
+1. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
 
 # Functionality
 
