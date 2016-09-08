@@ -2,11 +2,24 @@
 
 A collection of scripts to handle agent downloads, installs and upgrades. Will sync controller info, account info, and Analytics agent info.
 
-## Supports:
+**Table of Contents**
+
+- [AppDynamics Agent Management](#)
+	- [Capabilities](#)
+	- [Requirements](#)
+- [Getting Started](#)
+- [Install/Upgrade Agent Locally](#)
+	- [Arguments and Settings](#)
+- [Install/Upgrade Agent on Remote Server(s)](#)
+	- [Arguments and Settings](#)
+		- [Environment Config](#)
+	- [Install Python Fabric](#)
+- [Download AppDynamics Software](#)
+
+## Capabilities
 * Install/upgrade the Java agent
     * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories.
     * Will sync custom-activity-correlation.xml, custom-interceptors.xml
-    * *NOTE*: You'll want the Java app server startup script to point to the javaagent.jar underneath the synlink.
 * Install/upgrade the Machine agent
     * Will sync controller-info.xml underneath the conf/ directory.
     * Sync extensions
@@ -17,9 +30,9 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 * Download any appdynamics software by passing in the download URL
 
 ## Requirements
-* Supported on Linux/OSX/Unix only
-* Python 2.7+ on the central operator/distribution server
-* Python Fabric on the central operator/distribution server
+* Supported on Linux/OSX/Unix only. No Windows support
+* Python 2.7+ on the central distribution server
+* Python Fabric on the central distribution server
 * Unzip utility available on the destination servers
 
 # Getting Started
@@ -34,6 +47,8 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 
 # Install/Upgrade Agent Locally
 Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
+
+> *NOTE*: The install script will create a symlink that always points to the latest version of the agent. Configure the Java app server startup script to point to this symlink.
 
 Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=./`
 
