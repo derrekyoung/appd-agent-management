@@ -332,9 +332,6 @@ handle-symlink() {
         rm "$symlink"
     fi
 
-    # currentDir=$(pwd)
-    # echo "$currentDir"
-
     # Create the symlink
     log-info "Creating symlink from $fileAndVersionLowercase/ to $symlink/"
     ln -s "$directory" "$symlink"
