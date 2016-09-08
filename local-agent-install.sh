@@ -333,7 +333,7 @@ handle-symlink() {
     fi
 
     # Create the symlink
-    log-info "Creating symlink from $fileAndVersionLowercase/ to $symlink/"
+    log-info "Creating symlink from $directory/ to $symlink/"
     ln -s "$directory" "$symlink"
 }
 
