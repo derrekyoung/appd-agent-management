@@ -128,7 +128,7 @@ prompt-for-args() {
     # if empty then prompt
     while [[ -z "$APPD_AGENT_HOME" ]]
     do
-        log-info "Enter the remote AppDyanmics home/install directory: "
+        log-info "Enter the remote AppDynamics home/install directory: "
         read APPD_AGENT_HOME
     done
 }
@@ -142,7 +142,7 @@ validate-args() {
 
     # Verify that APPD_AGENT_HOME is set
     if [[ -z "$APPD_AGENT_HOME" ]]; then
-        log-error "You must set the remote AppDyanmics home directory"
+        log-error "You must set the remote AppDynamics home directory"
         exit 1
     fi
 }
