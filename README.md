@@ -14,6 +14,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
     * Sync properties for the Analytics agent (endpoint, account name, access key, proxy info)
 * Install/upgrade the DB agent
     * Will sync controller-info.xml underneath the conf/ directory.
+* Download any appdynamics software by passing in the download URL
 
 ## Requirements
 * Supported on Linux/OSX/Unix only
@@ -28,15 +29,14 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
     1. Execute local installs/upgrades by running `local-agent-install.sh`. See below.
 1. Remote management
     1. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
+    2. Create your environment config named as `config-NAME_HERE.json`. See below.
 
-# Functionality
-
-## Install/Upgrade Agent Locally
+# Install/Upgrade Agent Locally
 Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
 
 Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=./`
 
-### Arguments and Settings
+## Arguments and Settings
 1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional params:
     * -a= Agent archive
     * -h= Remote AppDynamics home directory
@@ -53,9 +53,9 @@ You must install Python Fabric on your management system (the system where you l
 
 Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynamics/ -e=Production`
 
-### Arguments and Settings
+## Arguments and Settings
 1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional params:
-    * -e= Deployment environment config
+    * -e= Deployment environment configuration name
     * -a= Agent archive
     * -h= Remote AppDynamics home directory
 1. `REMOTE_APPD_HOME`: where to install the AppDynamics agents. Default is /opt/AppDynamics/.
@@ -63,14 +63,41 @@ Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynam
 1. `DEBUG_LOGS`: set to `true` to turn on verbose logging.
 
 ### Environment Config
+You must define your remote servers and credentials in a config file. The file must be of the name `config-NAME_HERE.json`. 
+
 The configuration JSON file contains a few elements. It must be valid JSON so use a JSON validator like, http://jsonlint.com/.
+
+Example:
+```
+{
+   // REQUIRED A list of remote hosts. Can be in the format of plain hostnames or as username@hostname, 
+   // where you specify an explicit username to override the default username
+    "hosts": [
+        "root@server5.internal.mycompany.org"
+        ,"appdynamics@server6"
+        ,"ubuntu@server7.us"
+        ,"jsmith@server8.co"
+        ,"server9.example.com"
+    ],
+    
+    // (optional) The default, implicit username for the remote hosts. Useful if all usernames will be 
+    // the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME
+    "user": "user1",
+    
+    // (optional) A list of SSH keys to access the remote hosts
+    "key_filename": [
+        "./my-key1.pem"
+        ,"./my-key2.pem"
+    ]
+}
+```
 
 * **hosts**: REQUIRED A list of remote hosts. They can be in the format of simple hostnames or as username@hostname where you specify an explicit username to override the default username
 * **user**: (optional) The default, implicit username for the remote hosts. Use this if all usernames will be the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME. See `config-sample.json` for examples.
 * **key_filename**: (optional) A list of SSH keys to access the remote hosts
 * **passwords**: You will be prompted for passwords interactively. Do not enter them in your config JSON file.
 
-### Install Python Fabric
+## Install Python Fabric
 
 http://www.fabfile.org/installing.html
 
@@ -78,7 +105,7 @@ http://www.fabfile.org/installing.html
 * RHEL/CentOS: sudo yum install fabric
 * Pip: sudo pip install fabric
 
-## Download AppDynamics Software
+# Download AppDynamics Software
 This will prompt you for your username, password and the download URL. You can optionally set the values at the top of the script or pass in arguments.
 
 Usage: `./download.sh -e=foo@example.com -p=password123 -u=http://download.appdyanmcsi.com/javaagent-1.2.3.zip`
