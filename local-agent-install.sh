@@ -324,20 +324,20 @@ sync-analytics-agent() {
 handle-symlink() {
     local parentDirectory="$1"
     local directory="$2"
-    local symlink="$3"
+    local symlink="$parentDirectory/$3"
 
     # Remove existing symlink
-    if [ -d "$parentDirectory/$symlink" ]; then
-        log-debug "Removing existing symlink $symlink"
-        rm "$parentDirectory/$symlink"
+    if [ -d "$symlink" ]; then
+        log-debug "Removing existing symlink symlink"
+        rm "$symlink"
     fi
 
     # currentDir=$(pwd)
     # echo "$currentDir"
 
     # Create the symlink
-    log-info "Creating symlink from $fileAndVersionLowercase/ to $parentDirectory/$symlink/"
-    ln -s "$directory" "$parentDirectory/$symlink"
+    log-info "Creating symlink from $fileAndVersionLowercase/ to $symlink/"
+    ln -s "$directory" "$symlink"
 }
 
 log-info() {
