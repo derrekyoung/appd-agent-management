@@ -3,5 +3,7 @@
 .DS_Store
 archives/
 dist/
+tmp/
+
 config-*
 !config-sample.json
