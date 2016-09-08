@@ -53,6 +53,7 @@ main() {
 
     # Create install dir if not exists
     if [ ! -d "$APPD_AGENT_HOME" ]; then
+        log-debug "Creating APPD home, $APPD_AGENT_HOME"
         mkdir -p "$APPD_AGENT_HOME"
     fi
 
@@ -70,6 +71,7 @@ main() {
     log-info "Unzipping $inputFile into $newAgentInstallDirectory"
     # Unzip the file
     unzip -q "$inputFile" -d "$newAgentInstallDirectory"
+
 
     # Uses global variables to both instances of copy-controller.xml
     copy-controller-info
@@ -325,14 +327,17 @@ handle-symlink() {
     local symlink="$3"
 
     # Remove existing symlink
-    if [ -d "$symlink" ]; then
+    if [ -d "$parentDirectory/$symlink" ]; then
         log-debug "Removing existing symlink $symlink"
-        rm "$symlink"
+        rm "$parentDirectory/$symlink"
     fi
 
+    # currentDir=$(pwd)
+    # echo "$currentDir"
+
     # Create the symlink
-    log-info "Creating symlink from $fileAndVersionLowercase/ to $symlink/"
-    ln -s "$directory" "$symlink"
+    log-info "Creating symlink from $fileAndVersionLowercase/ to $parentDirectory/$symlink/"
+    ln -s "$directory" "$parentDirectory/$symlink"
 }
 
 log-info() {
