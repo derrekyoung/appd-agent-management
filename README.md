@@ -25,11 +25,12 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 # Getting Started
 1. Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases/latest
 1. Unzip the release and run `chmod u+x *.sh` on the files in the release directory so that your user can execute the scripts.
-1. Local management
+1. Local agent management
     1. Execute local installs/upgrades by running `local-agent-install.sh`. See below.
-1. Remote management
-    1. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
-    2. Create your environment config named as `config-NAME_HERE.json`. See below.
+    2. Test locally before deploying remotely.
+1. Remote agent management
+    1. Create your environment config named as `config-NAME_HERE.json`. See below.
+    2. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
 
 # Install/Upgrade Agent Locally
 Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
@@ -44,12 +45,14 @@ Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=./`
 1. `DEBUG_LOGS`: set to `true` to turn on verbose logging.
 
 
-## Install/Upgrade Agent on Remote Server(s)
+# Install/Upgrade Agent on Remote Server(s)
 Operates on remote systems. Requires you to create and define a configuration environment. The environment config must be in a JSON file and named in the format of `config-NAME_HERE.json`.
 
 For example, the Production environment might be defined in config-production.json. You'd then trigger this config in `remote-agent-install.sh` by passing in the `-e=production` argument or entering `production` in the interactive shell. See `config-sample.json` for
 
 You must install Python Fabric on your management system (the system where you launch the script), but **NOT** on the remote systems. Communication to the systems has no external dependencies because all comms happen over SSH and Shell.
+
+Test locally before deploying remotely.
 
 Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynamics/ -e=Production`
 
