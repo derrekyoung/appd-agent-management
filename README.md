@@ -5,16 +5,16 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 **Table of Contents**
 
 - [AppDynamics Agent Management](#)
-	- [Capabilities](#)
-	- [Requirements](#)
-- [Getting Started](#)
-- [Install/Upgrade Agent Locally](#)
-	- [Arguments and Settings](#)
-- [Install/Upgrade Agent on Remote Server(s)](#)
-	- [Arguments and Settings](#)
-		- [Environment Config](#)
-	- [Install Python Fabric](#)
-- [Download AppDynamics Software](#)
+	- [Capabilities](#capabilities)
+	- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
+	- [Arguments and Settings](#arguments-and-settings)
+- [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
+	- [Arguments and Settings](#arguments-and-settings-1)
+	- [Environment Config](#environment-config)
+	- [Install Python Fabric](#install-python-fabric)
+- [Download AppDynamics Software](#download-appdynamics-software)
 
 ## Capabilities
 * Install/upgrade the Java agent
@@ -80,7 +80,7 @@ Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynam
 1. `ENV`: JSON file containing
 1. `DEBUG_LOGS`: set to `true` to turn on verbose logging.
 
-### Environment Config
+## Environment Config
 You must define your remote servers and credentials in a config file. The file must be of the name `config-NAME_HERE.json`. 
 
 The configuration JSON file contains a few elements. It must be valid JSON so use a JSON validator like, http://jsonlint.com/.
