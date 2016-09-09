@@ -35,6 +35,28 @@ main() {
     download
 }
 
+build-url() {
+    if [[ -z "$URL" ]]; then
+        echo -n "Enter the AppDynamics download URL: "
+        read -r URL
+    fi
+}
+
+download() {
+    echo "Downloading $URL as $EMAIL"
+
+    if [ ! -d "$DOWNLOAD_HOME" ]; then
+        mkdir "$DOWNLOAD_HOME"
+    fi
+
+    cd "$DOWNLOAD_HOME"
+
+    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
+    curl -L -O -b cookies.txt $URL
+
+    rm cookies.txt
+}
+
 parse-args() {
     # Grab arguments in case there are any
     for i in "$@"
@@ -65,7 +87,7 @@ prompt-for-credentials() {
     # if email empty then prompt
     if [[ -z "$EMAIL" ]]; then
         echo -n "Enter your AppDynamics email address: "
-        read EMAIL
+        read -r EMAIL
     fi
 
     # if password empty then prompt
@@ -84,28 +106,6 @@ prompt-for-credentials() {
         done
         echo
     fi
-}
-
-build-url() {
-    if [[ -z "$URL" ]]; then
-        echo -n "Enter the AppDynamics download URL: "
-        read URL
-    fi
-}
-
-download() {
-    echo "Downloading $URL as $EMAIL"
-
-    if [ ! -d "$DOWNLOAD_HOME" ]; then
-        mkdir "$DOWNLOAD_HOME"
-    fi
-
-    cd "$DOWNLOAD_HOME"
-
-    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
-    curl -L -O -b cookies.txt $URL
-
-    rm cookies.txt
 }
 
 main "$@"
