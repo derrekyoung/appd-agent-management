@@ -73,9 +73,12 @@ main() {
     unzip -q "$inputFile" -d "$newAgentInstallDirectory"
 
 
+    # Build a bunch of file and directory names as GLOBAL variables
+    set-agent-version-path-variables
+
+
     # Uses global variables to both instances of copy-controller.xml
     copy-controller-info
-
 
     # Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
     copy-extensions
@@ -117,7 +120,7 @@ prompt-for-args() {
     while [[ -z "$ARCHIVE" ]]
     do
         log-info "Enter the path to the AppDynamics agent archive: "
-        read ARCHIVE
+        read -r ARCHIVE
 
         if [[ ! -f "$ARCHIVE" ]]; then
             log-warn "Archive file not found, $ARCHIVE"
@@ -129,7 +132,7 @@ prompt-for-args() {
     while [[ -z "$APPD_AGENT_HOME" ]]
     do
         log-info "Enter the remote AppDynamics home/install directory: "
-        read APPD_AGENT_HOME
+        read -r APPD_AGENT_HOME
     done
 }
 
@@ -170,6 +173,32 @@ set-file-and-directory-variables() {
     log-debug "oldAgentInstallDirectory=$oldAgentInstallDirectory"
 }
 
+set-agent-version-path-variables() {
+    newAgentVersionPath=""
+	oldAgentVersionPath=""
+	# Ver the version directory
+	log-debug "Setting the version directory"
+    if [ -f "$newAgentInstallDirectory/machineagent.jar" ] || [ -f "$newAgentInstallDirectory/db-agent.jar" ]; then
+		# log-debug "Machine or DB agent"
+		newAgentVersionPath=$(ls -d "$newAgentInstallDirectory")
+        log-debug "New MA/DB agent version directory newAgentVersionPath=$newAgentVersionPath"
+
+        if [ -d "$oldAgentInstallDirectory" ]; then
+    		oldAgentVersionPath=$(ls -d "$oldAgentInstallDirectory")
+        	log-debug "Old MA/DB agent version directory oldAgentVersionPath=$oldAgentVersionPath"
+        fi
+	else
+		newAgentVersionPath=$(ls -d "$newAgentInstallDirectory"/ver*)
+        log-debug "New Java agent version directory newAgentVersionPath=$newAgentVersionPath"
+
+		if [ -d "$oldAgentInstallDirectory" ]; then
+			# echo "oldAgentInstallDirectory $oldAgentInstallDirectory"
+			oldAgentVersionPath=$(ls -d "$oldAgentInstallDirectory"/ver*)
+        	log-debug "Old Java agent version directory oldAgentVersionPath=$oldAgentVersionPath"
+		fi
+	fi
+}
+
 copy-file() {
     local fileName=$1
     local sourceDir=$2
@@ -184,43 +213,25 @@ copy-file() {
     fi
 }
 
+copy-agent-properties-file() {
+    if [ -d "$oldAgentInstallDirectory/conf" ]; then
+        copy-file "agent.properties" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
+    fi
+
+    # Copy existing AGENT_HOME/verNNN/conf/controller-info.xml
+    if [ -d "$oldAgentVersionPath/conf" ]; then
+        copy-file "agent.properties" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
+    fi
+}
+
 copy-controller-info() {
-    #
     # Copy existing AGENT_HOME/conf/controller-info.xml
-    #
     if [ -d "$oldAgentInstallDirectory/conf" ]; then
         copy-file "controller-info.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
         copy-file "custom-interceptors.xml" "$oldAgentInstallDirectory/conf" "$newAgentInstallDirectory/conf"
     fi
 
-    #
     # Copy existing AGENT_HOME/verNNN/conf/controller-info.xml
-    #
-    # Get and set the agent version paths
-    local newAgentVersionPath=""
-	local oldAgentVersionPath=""
-	# Ver the version directory
-	log-debug "Setting the version directory"
-    if [ -f "$newAgentInstallDirectory/machineagent.jar" ] || [ -f "$newAgentInstallDirectory/db-agent.jar" ]; then
-		# log-debug "Machine or DB agent"
-		newAgentVersionPath=$(ls -d $newAgentInstallDirectory)
-        log-debug "New MA/DB agent version directory newAgentVersionPath=$newAgentVersionPath"
-
-        if [ -d "$oldAgentInstallDirectory" ]; then
-    		oldAgentVersionPath=$(ls -d $oldAgentInstallDirectory)
-        	log-debug "Old MA/DB agent version directory oldAgentVersionPath=$oldAgentVersionPath"
-        fi
-	else
-		newAgentVersionPath=$(ls -d $newAgentInstallDirectory/ver*)
-        log-debug "New Java agent version directory newAgentVersionPath=$newAgentVersionPath"
-
-		if [ -d "$oldAgentInstallDirectory" ]; then
-			# echo "oldAgentInstallDirectory $oldAgentInstallDirectory"
-			oldAgentVersionPath=$(ls -d $oldAgentInstallDirectory/ver*)
-        	log-debug "Old Java agent version directory oldAgentVersionPath=$oldAgentVersionPath"
-		fi
-	fi
-
     if [ -d "$oldAgentVersionPath/conf" ]; then
         copy-file "controller-info.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
         copy-file "custom-activity-correlation.xml" "$oldAgentVersionPath/conf" "$newAgentVersionPath/conf"
@@ -230,14 +241,14 @@ copy-controller-info() {
 # Sync Machine Agent extensions in monitors/. Exclude HardwareMonitor, JavaHardwareMonitor, and analytics-agent
 copy-extensions() {
     if [ -d "$oldAgentInstallDirectory/monitors/" ]; then
-        dirs=$(ls -d $oldAgentInstallDirectory/monitors/*)
+        dirs=$(ls -d "$oldAgentInstallDirectory"/monitors/*)
         for dir in $dirs
         do
             if [[ $dir != *"analytics-agent"* ]] \
             && [[ $dir != *"JavaHardwareMonitor"* ]] \
             && [[ $dir != *"HardwareMonitor"* ]] \
             && [[ $dir != *"ServerMonitoringPro"* ]]; then
-                local basenameDir=$(basename $dir)
+                local basenameDir=$(basename "$dir")
                 log-info "Copying extension from $oldAgentInstallDirectory/monitors/$basenameDir/ to $newAgentInstallDirectory/monitors/$basenameDir/"
                 cp -R "$oldAgentInstallDirectory/monitors/$basenameDir/" "$newAgentInstallDirectory/monitors/$basenameDir/"
             fi
