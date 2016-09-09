@@ -14,7 +14,7 @@
 EMAIL=""
 PASSWORD=""
 URL=""
-
+DOWNLOAD_HOME="./archives"
 
 
 ################################################################################
@@ -95,6 +95,12 @@ build-url() {
 
 download() {
     echo "Downloading $URL as $EMAIL"
+
+    if [ ! -d "$DOWNLOAD_HOME" ]; then
+        mkdir "$DOWNLOAD_HOME"
+    fi
+
+    cd "$DOWNLOAD_HOME"
 
     curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
     curl -L -O -b cookies.txt $URL
