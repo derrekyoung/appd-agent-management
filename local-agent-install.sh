@@ -339,7 +339,7 @@ handle-symlink() {
 
     # Remove existing symlink
     if [ -d "$symlink" ]; then
-        log-debug "Removing existing symlink symlink"
+        log-debug "Removing existing symlink $symlink"
         rm "$symlink"
     fi
 
