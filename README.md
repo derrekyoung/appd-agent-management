@@ -10,9 +10,10 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 - [Getting Started](#getting-started)
 - [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
 	- [Arguments and Settings](#arguments-and-settings)
+	- [Agent Configuration Properties](#agent-configuration-properties)
 - [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
 	- [Arguments and Settings](#arguments-and-settings-1)
-	- [Environment Config](#environment-config)
+	- [Environment Config](#remote-environment-config)
 	- [Install Python Fabric](#install-python-fabric)
 - [Download AppDynamics Software](#download-appdynamics-software)
 
@@ -50,15 +51,37 @@ Operates on your local system. Install a brand new agent or upgrade a new agent 
 
 > *NOTE*: The install script will create a symlink that always points to the latest version of the agent. Configure the Java app server startup script to point to this symlink.
 
-Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=./`
+Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=./agents`
 
 ## Arguments and Settings
-1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional params:
-    * -a= Agent archive
-    * -h= Remote AppDynamics home directory
+1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional command line arguments:
+    * -a|--archive= Agent archive
+    * -h|--appdhome= Remote AppDynamics home directory
+	* -c|--config= (optional) Agent properties configuration file
 1. `APPD_AGENT_HOME`: the install directory for the agents. The default is to install it in the same directory where you run the script.
 1. `DEBUG_LOGS`: set to `true` to turn on verbose logging.
 
+## Agent Configuration Properties
+You can update agent configuration details (controller, access key, analytics endpoint, etc.) by passing in a properties file. A sample file is provided for you to update with your information. (Do not change the key names in the file.) You can create your own configuration files of any name to distinguish between different Controllers or different agent profiles.
+
+Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -c=agent-config.properties`
+
+Example `controller-info.xml` properties:
+```PROPERTIES
+controller-host=example.saas.appdynamics.com
+controller-port=443
+controller-ssl-enabled=true
+account-name=my-account-dev
+account-access-key=1234-asdf-1234-asdf-1234-asdf
+```
+
+Example `analytics-agent.properties` properties:
+```PROPERTIES
+analytics.agent.enabled=true
+http.event.endpoint=https://analytics.api.appdynamics.com:443
+http.event.accountName=global_accountName_asdfasdfasdfasdf
+http.event.accessKey=1234-asdf-1234-asdf-1234-asdf
+```
 
 # Install/Upgrade Agent on Remote Server(s)
 Operates on remote systems. Requires you to create and define a configuration environment. The environment config must be in a JSON file and named in the format of `config-NAME_HERE.json`.
@@ -72,23 +95,24 @@ Test locally before deploying remotely.
 Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynamics/ -e=Production`
 
 ## Arguments and Settings
-1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional params:
-    * -e= Deployment environment configuration name
-    * -a= Agent archive
-    * -h= Remote AppDynamics home directory
+1. Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script. Optional command line arguments:
+    * -e|--environment= Deployment environment configuration name
+    * -a|--archive= Agent archive
+    * -h|--appdhome= Remote AppDynamics home directory
+	* -c|--config= (optional) Agent properties configuration file
 1. `REMOTE_APPD_HOME`: where to install the AppDynamics agents. Default is /opt/AppDynamics/.
-1. `ENV`: JSON file containing
+1. `ENV`: JSON file containing remote host names and credentials
 1. `DEBUG_LOGS`: set to `true` to turn on verbose logging.
 
-## Environment Config
-You must define your remote servers and credentials in a config file. The file must be of the name `config-NAME_HERE.json`. 
+## Remote Environment Config
+You must define your remote servers and credentials in a config file. The file must be of the name `config-NAME_HERE.json`.
 
 The configuration JSON file contains a few elements. It must be valid JSON so use a JSON validator like, http://jsonlint.com/.
 
 Example:
 ```
 {
-   // REQUIRED A list of remote hosts. Can be in the format of plain hostnames or as username@hostname, 
+   // REQUIRED A list of remote hosts. Can be in the format of plain hostnames or as username@hostname,
    // where you specify an explicit username to override the default username
     "hosts": [
         "root@server5.internal.mycompany.org"
@@ -97,11 +121,11 @@ Example:
         ,"jsmith@server8.co"
         ,"server9.example.com"
     ],
-    
-    // (optional) The default, implicit username for the remote hosts. Useful if all usernames will be 
+
+    // (optional) The default, implicit username for the remote hosts. Useful if all usernames will be
     // the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME
     "user": "user1",
-    
+
     // (optional) A list of SSH keys to access the remote hosts
     "key_filename": [
         "./my-key1.pem"
