@@ -128,7 +128,7 @@ def check_host():
 
 @task
 def set_env(env_str):
-    file = 'config-'+str(env_str)+'.json'
+    file = 'remote-config-'+str(env_str)+'.json'
 
     with open(file, 'r') as json_data:
         env_data = json.load(json_data)
