@@ -5,5 +5,8 @@ archives/
 dist/
 tmp/
 
-config-*
-!config-sample.json
+remote-config-*
+!remote-config-sample.json
+
+agent-config-*
+!agent-config-sample.properties
