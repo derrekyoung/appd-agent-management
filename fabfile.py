@@ -45,6 +45,7 @@ env.user = 'appd' # Default, implicit user
 
 
 agent_install_script_path = 'local-agent-install.sh'
+agent_config_script_path = 'local-agent-config.sh'
 
 
 ################################################################################
@@ -53,7 +54,7 @@ agent_install_script_path = 'local-agent-install.sh'
 # @parallel(pool_size=10)
 # @task(default=True)
 @task
-def deploy_agent(archive, appd_home_dir):
+def deploy_agent(archive, appd_home_dir, agent_config_file):
     # Quick sanity check
     validate_file(archive)
 
@@ -63,27 +64,34 @@ def deploy_agent(archive, appd_home_dir):
 
     print('INFO:  Installing AppDyanmics agent into '+appd_home_dir)
 
-    # Upload the agent install script
-    upload_file(agent_install_script_path, appd_home_dir)
-    chmod_script( ntpath.basename(agent_install_script_path), appd_home_dir)
-
-    # Upload the archive
-    upload_file(archive, appd_home_dir)
+    # Upload install stuff
+    upload_install_artifacts(appd_home_dir,
+        ntpath.basename(agent_install_script_path),
+        archive)
+    # Upload config stuff
+    upload_config_artifacts(appd_home_dir,
+        ntpath.basename(agent_config_script_path),
+        agent_config_file)
 
 
     # Install the agent. Upgrade in place, if necessary
-    install_agent(ntpath.basename(archive), appd_home_dir, ntpath.basename(agent_install_script_path) )
+    install_agent(ntpath.basename(archive),
+        appd_home_dir,
+        ntpath.basename(agent_install_script_path),
+        ntpath.basename(agent_config_script_path),
+        ntpath.basename(agent_config_file) )
 
-
-    # Delete the archive
-    delete(ntpath.basename(archive), appd_home_dir)
-
-    # Delete the installer script
-    delete(ntpath.basename(agent_install_script_path), appd_home_dir)
+    # Clean up installation
+    clean_install_artifacts(appd_home_dir,
+        ntpath.basename(agent_install_script_path),
+        ntpath.basename(archive) )
+    # Clean up configs
+    clean_config_artifacts(appd_home_dir,
+        ntpath.basename(agent_config_script_path),
+        ntpath.basename(agent_config_file) )
 
     print('INFO:  Agent deployment finished.\n\n')
 
-@parallel(pool_size=100)
 def create_appd_home_dir(user, appd_home_dir):
     print('INFO:  creating AppDynamics home directory, '+appd_home_dir)
     sudo('mkdir -p '+appd_home_dir)
@@ -91,28 +99,61 @@ def create_appd_home_dir(user, appd_home_dir):
     print('INFO:  setting permissions on AppDynamics '+appd_home_dir+' for user='+user)
     sudo('chown -R '+user+':'+user+' '+appd_home_dir)
 
-@parallel(pool_size=100)
+
+################################################################################
+# Installation tasks
+def upload_install_artifacts(directory, script, archive):
+    # Upload the agent install script
+    upload_file(script, directory)
+    chmod_script(script, directory)
+
+    # Upload the archive
+    upload_file(archive, directory)
+
+def install_agent(archive, appd_home, install_script, config_script, agent_config_file):
+    with cd(appd_home):
+        run('./'+install_script+' -a='+archive+' -h='+appd_home+' -c='+agent_config_file)
+
+def clean_install_artifacts(directory, script, archive):
+    with cd(directory):
+        # Delete the archive
+        run('rm -f '+archive)
+        # Delete the installer script
+        run('rm -f '+script)
+
+
+################################################################################
+# Configuration tasks
+def upload_config_artifacts(directory, config_script, config_file):
+    if os.path.isfile(config_file):
+        upload_file(config_script, directory)
+        chmod_script(config_script, directory)
+
+        upload_file(config_file, directory)
+
+def clean_config_artifacts(directory, config_script, config_file):
+    with cd(directory):
+        # Delete the config script
+        run('rm -f '+config_script)
+        # Delete the config file
+        run('rm -f '+config_file)
+
+
+################################################################################
+# Utility tasks
 def upload_file(file, upload_dir):
     print('INFO:  uploading '+file+' to '+upload_dir)
     upload = put(file, upload_dir)
     upload.succeeded
 
-@parallel(pool_size=100)
 def chmod_script(file, dir):
     with cd(dir):
         run('chmod u+x '+file)
 
-@parallel(pool_size=10)
-def install_agent(archive, appd_home, script):
-    with cd(appd_home):
-        run('./'+script+' -a='+archive+' -h='+appd_home)
-
-@parallel(pool_size=100)
 def delete(file, dir):
     with cd(dir):
-        run('rm '+file)
+        run('rm -f '+file)
 
-@parallel(pool_size=100)
 def validate_file(file):
     if not file:
         print('INFO:\n  USAGE: fab deploy_agent deploy_agent:archive=test,appd_home_dir=./AppServerAgent-4.2.5.1.zip')

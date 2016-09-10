@@ -23,6 +23,8 @@ ENV=""
 # Where to install AppDynamics
 REMOTE_APPD_HOME="/opt/AppDynamics/"
 
+# An optional configuration file for agent properties (controller-info.xml, analytics-agent.properties
+AGENT_CONFIG_FILE=""
 
 
 ################################################################################
@@ -34,9 +36,10 @@ usage() {
     echo "Usage: $0 [-e=environment] [-a=path to agent archive] [-h=AppD home]"
     echo "Install/upgrade AppDynamics agents."
     echo "Optional params:"
-    echo "    -e= Deployment environment config"
-    echo "    -a= Agent archive"
-    echo "    -h= Remote AppDynamics home directory"
+    echo "    -e|--environment= Deployment environment config"
+    echo "    -a|--archive= Agent archive"
+    echo "    -h|--appdhome= Remote AppDynamics home directory"
+    echo "    -c|--config= (optional) Agent properties configuration file"
     echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
 }
 
@@ -50,7 +53,7 @@ main() {
     log-info "Started:  $startDate"
 
     # Call Python Fabric to do remote management
-    fab set_env:"$ENV" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME"
+    fab set_env:"$ENV" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME",agent_config_file="$AGENT_CONFIG_FILE"
 
     # Clean up the compiled file
     rm -f fabfile.pyc
@@ -77,6 +80,10 @@ parse-args() {
                 REMOTE_APPD_HOME="${i#*=}"
                 shift # past argument=value
                 ;;
+            -c=*|--config=*)
+                AGENT_CONFIG_FILE="${i#*=}"
+                shift # past argument=value
+                ;;
             *)
                 log-error "Error parsing argument $1" >&2
                 usage
@@ -91,9 +98,9 @@ prompt-for-args() {
     while [[ -z "$ENV" ]]
     do
         log-info "Enter the environment config name: "
-        read ENV
+        read -r ENV
 
-        local ENV_FILE="./config-$ENV.json"
+        local ENV_FILE="./remote-config-$ENV.json"
         if [[ ! -f "$ENV_FILE" ]]; then
             log-warn "Environment file not found, $ENV_FILE"
             ENV=""
@@ -104,7 +111,7 @@ prompt-for-args() {
     while [[ -z "$ARCHIVE" ]]
     do
         log-info "Enter the path to the AppDynamics agent archive: "
-        read ARCHIVE
+        read -r ARCHIVE
 
         if [[ ! -f "$ARCHIVE" ]]; then
             log-warn "Archive file not found, $ARCHIVE"
@@ -116,12 +123,22 @@ prompt-for-args() {
     while [[ -z "$REMOTE_APPD_HOME" ]]
     do
         log-info "Enter the remote AppDyanmics home/install directory: "
-        read REMOTE_APPD_HOME
+        read -r REMOTE_APPD_HOME
     done
+
+    if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
+        log-info "Do you wish to update agent properties? Enter the agent config file name or leave blank:"
+        read -r AGENT_CONFIG_FILE
+
+        if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
+            log-warn "Agent config file not found, $AGENT_CONFIG_FILE"
+            AGENT_CONFIG_FILE=""
+        fi
+    fi
 }
 
 validate-args() {
-    local ENV_FILE="./config-$ENV.json"
+    local ENV_FILE="./remote-config-$ENV.json"
     if [[ ! -f "$ENV_FILE" ]]; then
         log-error "Environment file not found, $ENV_FILE"
         usage
@@ -141,18 +158,18 @@ validate-args() {
     fi
 }
 
+log-debug() {
+    if [[ $DEBUG_LOGS = true ]]; then
+        echo -e "DEBUG: $1"
+    fi
+}
+
 log-info() {
     echo -e "INFO:  $1"
 }
 
 log-warn() {
     echo -e "WARN:  $1"
-}
-
-log-debug() {
-    if [ $DEBUG_LOGS = true ]; then
-        echo -e "DEBUG: $1"
-    fi
 }
 
 log-error() {

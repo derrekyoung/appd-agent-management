@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) AppDynamics Inc
+  ~ All rights reserved
+  -->
+
+<monitor>
+    <name>AppDynamics Analytics Agent</name>
+    <type>managed</type>
+    <!-- Enabling this requires JRE 7 or higher  -->
+    <enabled>false</enabled>
+    <description>AppDynamics Analytics Agent</description>
+    <display-name>AppDynamics Analytics Agent</display-name>
+    <monitor-configuration>
+    </monitor-configuration>
+    <monitor-run-task>
+        <type>java</type>
+        <execution-style>scheduled</execution-style>
+        <java-task>
+            <impl-class>
+                com.singularity.ee.agent.systemagent.task.analytics.AnalyticsAgentLauncher
+            </impl-class>
+            <classpath>lib</classpath>
+            <load-jars-in-classpath-dirs>true</load-jars-in-classpath-dirs>
+        </java-task>
+    </monitor-run-task>
+</monitor>
