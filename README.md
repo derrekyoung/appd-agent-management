@@ -43,7 +43,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
     1. Execute local installs/upgrades by running `local-agent-install.sh`. See below.
     2. Test locally before deploying remotely.
 1. Remote agent management
-    1. Create your environment config named as `config-NAME_HERE.json`. See below.
+    1. Create your environment config named as `remote-config-NAME_HERE.json`. See below.
     2. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
 
 # Install/Upgrade Agent Locally
