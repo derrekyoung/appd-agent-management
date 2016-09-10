@@ -12,10 +12,11 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 declare -a FILES=("README.md" \
     "download.sh" \
     "local-agent-install.sh" \
+    "local-agent-config.sh" \
     "remote-agent-install.sh" \
     "fabfile.py" \
-    "config-sample.json"\
-    "agent-config-sample.json")
+    "remote-config-sample.json"\
+    "agent-config-sample.properties")
 
 DIST_DIR="./dist"
 DIST_TOP_FOLDER="appd-agent-management-$VERSION"
@@ -68,8 +69,8 @@ dist() {
     replace-build-variables
 
     echo "INFO:  Creating the Zip file..."
-    cd $DIST_DIR/
-    zip -r $DISTRIBUTABLE_NAME $DIST_TOP_FOLDER/
+    cd $DIST_DIR/$DIST_TOP_FOLDER/
+    zip $DISTRIBUTABLE_NAME *
 
     echo "INFO:  Finished $ZIP_DIR/$DISTRIBUTABLE_NAME"
 }
