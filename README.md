@@ -18,17 +18,17 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 - [Download AppDynamics Software](#download-appdynamics-software)
 
 ## Capabilities
-* Install/upgrade the Java Agent
-* Install/upgrade the Machine Agent
+* Install/upgrade the **Java** Agent
+* Install/upgrade the **Machine** Agent
     * Sync extensions after upgrade
     * Sync properties for the Analytics agent (endpoint, account name, access key, proxy info) after upgrade
     * Automatically start the Machine Agent after install/upgrade
-* Install/upgrade the Database Agent
+* Install/upgrade the **Database** Agent
     * Automatically start the Database Agent after install/upgrade
 * Common
     * Automatically set connection info: controller hostname, port, ssl enabled, account name, access key
-    * Sync controller-info.xml, custom-activity-correlation.xml, custom-interceptors.xml for all applicable agents
-* Download any appdynamics software by passing in the download URL
+    * Sync **controller-info.xml**, custom-activity-correlation.xml, custom-interceptors.xml for all applicable agents
+* **Download** any appdynamics software by passing in the download URL
 
 ## Requirements
 * Supported on Linux only. No Windows support
