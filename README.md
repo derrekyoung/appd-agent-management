@@ -31,7 +31,7 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 * Download any appdynamics software by passing in the download URL
 
 ## Requirements
-* Supported on Linux/OSX/Unix only. No Windows support
+* Supported on Linux only. No Windows support
 * Python 2.7+ on the central distribution server
 * Python Fabric on the central distribution server
 * Unzip utility available on the destination servers
