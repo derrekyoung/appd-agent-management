@@ -21,7 +21,7 @@ DEBUG_LOGS=true
 ENV=""
 
 # Where to install AppDynamics
-REMOTE_APPD_HOME="/opt/AppDynamics/"
+REMOTE_APPD_HOME="/opt/AppDynamics"
 
 # An optional configuration file for agent properties (controller-info.xml, analytics-agent.properties
 AGENT_CONFIG_FILE=""
