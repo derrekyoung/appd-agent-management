@@ -112,7 +112,7 @@ def upload_install_artifacts(directory, script, archive):
 
 def install_agent(archive, appd_home, install_script, config_script, agent_config_file):
     with cd(appd_home):
-        run('./'+install_script+' -a='+archive+' -h='+appd_home+' -c='+agent_config_file)
+        run('./'+install_script+' -a='+archive+' -h='+appd_home+' -c='+agent_config_file+' && sleep 0.5', pty=False)
 
 def clean_install_artifacts(directory, script, archive):
     with cd(directory):
@@ -138,6 +138,45 @@ def clean_config_artifacts(directory, config_script, config_file):
         # Delete the config file
         run('rm -f '+config_file)
 
+################################################################################
+# Preperation tasks
+@task
+def check_host():
+    run('echo "Host is valid"')
+
+@task
+def set_env(env_str):
+    file = 'remote-config-'+str(env_str)+'.json'
+
+    with open(file, 'r') as json_data:
+        env_data = json.load(json_data)
+        json_data.close()
+
+        if env_data.get('user'):
+            env.user = env_data.get('user')
+
+        if env_data.get('key_filename'):
+            env.key_filename = env_data.get('key_filename')
+
+        if env_data.get('hosts'):
+            env.hosts = env_data.get('hosts')
+        else:
+            print('ERROR: You must define hosts in your JSON config file')
+            exit
+
+################################################################################
+# Service tasks
+def install_service(archive, appd_home_dir):
+    # Upload the install and service scripts
+
+    # Chmod scripts
+
+    # Install service
+
+    # Start service
+    sudo('service '+serviceName+' start')
+
+
 
 ################################################################################
 # Utility tasks
@@ -162,27 +201,3 @@ def validate_file(file):
     if not os.path.isfile(file):
         print('INFO:\n  ERROR: file to find '+file)
         sys.exit()
-
-@task
-def check_host():
-    run('echo "Host is valid"')
-
-@task
-def set_env(env_str):
-    file = 'remote-config-'+str(env_str)+'.json'
-
-    with open(file, 'r') as json_data:
-        env_data = json.load(json_data)
-        json_data.close()
-
-        if env_data.get('user'):
-            env.user = env_data.get('user')
-
-        if env_data.get('key_filename'):
-            env.key_filename = env_data.get('key_filename')
-
-        if env_data.get('hosts'):
-            env.hosts = env_data.get('hosts')
-        else:
-            print('ERROR: You must define hosts in your JSON config file')
-            exit

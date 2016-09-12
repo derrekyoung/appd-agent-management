@@ -72,8 +72,8 @@ main() {
     fi
 
 
-    log-info "Unzipping $ARCHIVE into $newAgentInstallDirectory"
     # Unzip the file
+    log-info "Unzipping $ARCHIVE into $newAgentInstallDirectory"
     unzip -q "$ARCHIVE" -d "$newAgentInstallDirectory"
 
 
@@ -98,6 +98,8 @@ main() {
 
     # Update agent settings if config file passed in
     update-agent-properties "$SYMLINK" "$AGENT_CONFIG_FILE"
+
+    start-agent "$SYMLINK"
 
     log-info "Agent install finished: $fileAndVersionLowercase"
 }
@@ -378,6 +380,79 @@ handle-symlink() {
     # Create the symlink
     log-info "Creating symlink from $directory/ to $link/"
     ln -s "$directory" "$link"
+}
+
+start-agent() {
+    local agentDir="$1"
+
+    local controllerInfoXML="$agentDir/conf/controller-info.xml"
+    if [[ $(is-file-exists "$controllerInfoXML") == "false" ]]; then
+        log-error "File not found: $controllerInfoXML"
+    fi
+
+    local controllerHost=$(read-value-in-xml-file "$controllerInfoXML" "controller-host")
+    if [[ $(is-empty "$controllerHost") == "true" ]]; then
+        log-info "Controller host info not set. Not starting agent"
+    fi
+
+    if [[ "$agentDir" == *dbagent* ]]; then
+        stop-dbagent
+        start-dbagent "$agentDir"
+    elif [[ "$agentDir" == *machineagent* ]]; then
+        stop-machineagent
+        start-machineagent "$agentDir"
+    fi
+}
+
+start-dbagent() {
+    local agentDir="$1"
+
+    local java=`find "$agentDir/jre" -name java -type f 2> /dev/null | head -n 1 2>/dev/null`
+    if [[ ! -z "$JAVA_HOME" ]] && [[ ! -z "$JAVA_HOME/bin/java" ]]; then
+        java="$JAVA_HOME/bin/java"
+    else
+        java=$(which java)
+    fi
+
+    log-debug "Starting the Database agent with $java $($java -version)"
+
+    nohup $java -Dappdynamics.agent.uniqueHostId="$HOSTNAME" -Ddbagent.name="$HOSTNAME" -jar $agentDir/db-agent.jar > /dev/null 2>&1 &
+}
+
+stop-dbagent() {
+    log-debug "Stopping the Database agent"
+
+    # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
+    kill -9 `ps -ef | grep "db-agent.jar" | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
+}
+
+start-machineagent() {
+    local agentHome="$1"
+
+    local java=`find "$agentHome/jre" -name java -type f 2> /dev/null | head -n 1 2>/dev/null`
+    if [ ! -z "$java" ]; then
+        # Use bundled JRE by default
+        :
+    elif [ ! -z "$JAVA_HOME/bin/java" ]; then
+        java="$JAVA_HOME/bin/java"
+    else
+        java=$(which java)
+    fi
+
+    log-debug "Starting the Machine agent with $java $($java -version)"
+
+    # Remove the Analytics agent PID
+    rm -f "$agentHome"/monitors/analytics-agent/analytics-agent.id
+
+    # Start the machine agent
+    nohup $java -Dappdynamics.agent.uniqueHostId="$HOSTNAME" -jar $agentHome/machineagent.jar > /dev/null 2>&1 &
+}
+
+stop-machineagent() {
+    log-debug "Stopping the Machine agent"
+
+    # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
+    kill -9 `ps -ef | grep "machineagent.jar" | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
 }
 
 log-debug() {
