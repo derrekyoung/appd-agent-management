@@ -19,15 +19,17 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 
 ## Capabilities
 * Install/upgrade the Java agent
-    * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories.
+    * Will sync controller-info.xml underneath the conf/ and verNNN/conf/ directories
     * Will sync custom-activity-correlation.xml, custom-interceptors.xml
 * Install/upgrade the Machine agent
-    * Will sync controller-info.xml underneath the conf/ directory.
+    * Will sync controller-info.xml underneath the conf/ directory
     * Sync extensions
+    * Automatically start the Machine Agent after install/upgrade
 * Install/upgrade the Analytics agent within the Machine agent
     * Sync properties for the Analytics agent (endpoint, account name, access key, proxy info)
 * Install/upgrade the DB agent
-    * Will sync controller-info.xml underneath the conf/ directory.
+    * Will sync controller-info.xml underneath the conf/ directory
+    * Automatically start the Database Agent after install/upgrade
 * Download any appdynamics software by passing in the download URL
 
 ## Requirements
