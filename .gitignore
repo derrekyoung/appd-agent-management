@@ -10,3 +10,5 @@ remote-config-*
 
 agent-config-*
 !agent-config-sample.properties
+!agent-config-sample1.properties
+!agent-config-sample2.properties
