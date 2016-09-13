@@ -2,20 +2,47 @@
 
 A collection of scripts to handle agent downloads, installs and upgrades. Will sync controller info, account info, and Analytics agent info.
 
-**Table of Contents**
+## Getting Started
 
-- [AppDynamics Agent Management](#)
-	- [Capabilities](#capabilities)
-	- [Requirements](#requirements)
-- [Getting Started](#getting-started)
-- [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
-	- [Arguments and Settings](#arguments-and-settings)
-	- [Agent Configuration Properties](#agent-configuration-properties)
-- [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
-	- [Arguments and Settings](#arguments-and-settings-1)
-	- [Environment Config](#remote-environment-config)
-	- [Install Python Fabric](#install-python-fabric)
-- [Download AppDynamics Software](#download-appdynamics-software)
+1. Download the scripts
+
+	Open a terminal and execute this command:
+	```BASH
+	curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download/v0.7-BETA/appd-agent-management-0.7-BETA.zip && unzip appd-agent-management-0.7-BETA.zip -d appd-home && cd appd-home && chmod u+x *.sh && ls -l && pwd && echo "Ready to download agents";
+	```
+1. Download the latest Java agent
+
+	In the same terminal, execute this command:
+	```BASH
+	./download.sh -u=https://aperture.appdynamics.com/download/prox/download-file/sun-jvm/4.2.6.0/AppServerAgent-4.2.6.0.zip
+	```
+1. Edit your Controller connection properties
+	1. Open a web browser and log in to your AppDynamics SaaS Controller
+	1. Open agent-config-sample.properties in a text editor
+		1. Change controller-host to your Controller hostname (no protocol or slashes)
+		1. Change account-name to your account name
+		1. Change account-access-key to your access key (Found on the License page in your Controller. Click the 'Show' link.)
+	1. Save the file.
+
+1. Install the Java agent
+
+	In the same terminal, execute this command:
+	```BASH
+	./local-agent-install.sh -a=./archives/AppServerAgent-4.2.6.0.zip -c=agent-config-sample.properties
+	```
+
+1. Instrument your Java server
+
+	1. Open your Java server startup script in a text editor
+	1. Add the line -javaagent:[PATH_TO_APPD_HOME]/agents/appserveragent/javaagent.jar
+		* Edit PATH_TO_APPD_HOME to be the actual path to your appd-home
+
+
+## Requirements
+* Supported on Linux only. No Windows support
+* Python 2.7+ on the central distribution server
+* Python Fabric on the central distribution server
+* Unzip utility available on the destination servers
 
 ## Capabilities
 * Install/upgrade the **Java** Agent
@@ -30,21 +57,22 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
     * Sync **controller-info.xml**, custom-activity-correlation.xml, custom-interceptors.xml for all applicable agents
 * **Download** any appdynamics software by passing in the download URL
 
-## Requirements
-* Supported on Linux only. No Windows support
-* Python 2.7+ on the central distribution server
-* Python Fabric on the central distribution server
-* Unzip utility available on the destination servers
 
-# Getting Started
-1. Download the latest release from https://github.com/derrekyoung/appd-agent-management/releases/latest
-1. Unzip the release and run `chmod u+x *.sh` on the files in the release directory so that your user can execute the scripts.
-1. Local agent management
-    1. Execute local installs/upgrades by running `local-agent-install.sh`. See below.
-    2. Test locally before deploying remotely.
-1. Remote agent management
-    1. Create your environment config named as `remote-config-NAME_HERE.json`. See below.
-    2. Execute remote installs/upgrades by running `./remote-agent-install.sh`. See below.
+
+# Table of Contents
+
+- [AppDynamics Agent Management](#)
+- 	  [Getting Started](#getting-started)
+	- [Capabilities](#capabilities)
+	- [Requirements](#requirements)
+- [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
+	- [Arguments and Settings](#arguments-and-settings)
+	- [Agent Configuration Properties](#agent-configuration-properties)
+- [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
+	- [Arguments and Settings](#arguments-and-settings-1)
+	- [Environment Config](#remote-environment-config)
+	- [Install Python Fabric](#install-python-fabric)
+- [Download AppDynamics Software](#download-appdynamics-software)
 
 # Install/Upgrade Agent Locally
 Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
