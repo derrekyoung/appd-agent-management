@@ -29,6 +29,8 @@ AGENT_CONFIG_FILE=""
 
 ################################################################################
 
+source ./utils/utilities.sh
+
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
 
@@ -138,7 +140,7 @@ prompt-for-args() {
 }
 
 validate-args() {
-    local ENV_FILE="./remote-config-$ENV.json"
+    local ENV_FILE=$(get-remote-hosts "$ENV")
     if [[ ! -f "$ENV_FILE" ]]; then
         log-error "Environment file not found, $ENV_FILE"
         usage
@@ -158,22 +160,10 @@ validate-args() {
     fi
 }
 
-log-debug() {
-    if [[ $DEBUG_LOGS = true ]]; then
-        echo -e "DEBUG: $1"
-    fi
-}
-
-log-info() {
-    echo -e "INFO:  $1"
-}
-
-log-warn() {
-    echo -e "WARN:  $1"
-}
-
-log-error() {
-    echo -e "ERROR: \n       $1"
+get-remote-hosts() {
+    local name="$1"
+    local cfg="./conf/remote-hosts/$name.json"
+    echo "$cfg"
 }
 
 main "$@"
