@@ -19,9 +19,9 @@ declare -a FILES=("README.md" \
     "agent-config-sample.properties")
 
 DIST_DIR="./dist"
-DIST_TOP_FOLDER="appd-agent-management-$VERSION"
+DIST_TOP_FOLDER="appd-agent-management"
 ZIP_DIR="$DIST_DIR/$DIST_TOP_FOLDER"
-DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER.zip"
+DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER-$VERSION.zip"
 
 
 copy-files() {
