@@ -20,7 +20,7 @@ source ./local-agent-config.sh "test"
 ################################################################################
 
 # Install directory for the AppDynamics agents. The default is where ever you run this script.
-APPD_AGENT_HOME="."
+APPD_AGENT_HOME="./agents"
 
 AGENT_CONFIG_FILE=""
 
