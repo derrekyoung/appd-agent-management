@@ -4,7 +4,11 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 
 ## Getting Started
 
-1. Download the scripts
+1. PreRequisites:
+	1. AppDynamics Users Account: email and password for agent download
+	1. Access to an AppDynamics Controller
+	
+1. Download the scripts:
 
 	Open a terminal and execute this command:
 	```BASH

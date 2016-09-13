@@ -1,14 +1,18 @@
 
 *.pyc
 .DS_Store
+
+agents/
 archives/
 dist/
 tmp/
 
 remote-config-*
+!sample.json
 !remote-config-sample.json
 
 agent-config-*
+!sample.properties
 !agent-config-sample.properties
 !agent-config-sample1.properties
 !agent-config-sample2.properties
