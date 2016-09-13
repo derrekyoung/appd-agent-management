@@ -46,6 +46,7 @@ build-url() {
         read -r URL
     done
 
+    # Get everything after the last slash
     ARCHIVE_NAME=$(echo "$URL" | sed 's:.*/::')
 }
 
