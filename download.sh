@@ -18,6 +18,10 @@ DOWNLOAD_HOME="./archives"
 
 
 ################################################################################
+# Do Not Edit Below This Line
+################################################################################
+
+ARCHIVE_NAME=""
 
 usage() {
     echo "Usage: $0 [-e=email] [-p=password] [-u=URL]"
@@ -36,10 +40,13 @@ main() {
 }
 
 build-url() {
-    if [[ -z "$URL" ]]; then
+    while [[ -z "$URL" ]]
+    do
         echo -n "Enter the AppDynamics download URL: "
         read -r URL
-    fi
+    done
+
+    ARCHIVE_NAME=$(echo "$URL" | sed 's:.*/::')
 }
 
 download() {
@@ -55,6 +62,8 @@ download() {
     curl -L -O -b cookies.txt $URL
 
     rm cookies.txt
+
+    echo -e "SUCCESS: Agent downloaded to $DOWNLOAD_HOME/$ARCHIVE_NAME"
 }
 
 parse-args() {
