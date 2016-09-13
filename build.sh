@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.7-BETA"
+VERSION="0.8-BETA"
 AUTHORS="Derrek Young, Eli Rodriguez"
 
 
@@ -15,8 +15,10 @@ declare -a FILES=("README.md" \
     "local-agent-config.sh" \
     "remote-agent-install.sh" \
     "fabfile.py" \
-    "remote-config-sample.json"\
-    "agent-config-sample.properties")
+    "conf/agent-configs/sample.properties" \
+    "conf/remote-hosts/sample.json" \
+    "utils/utilities.sh" \
+    "utils/latest-version.txt")
 
 DIST_DIR="./dist"
 DIST_TOP_FOLDER="appd-agent-management"
@@ -27,7 +29,8 @@ DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER-$VERSION.zip"
 copy-files() {
     for file in "${FILES[@]}"
     do
-        cp $file $ZIP_DIR/
+        # cp $file $ZIP_DIR/
+        rsync -R $file $ZIP_DIR/
     done
 }
 
@@ -70,7 +73,7 @@ dist() {
 
     echo "INFO:  Creating the Zip file..."
     cd $DIST_DIR/$DIST_TOP_FOLDER/
-    zip $DISTRIBUTABLE_NAME *
+    zip -r $DISTRIBUTABLE_NAME *
 
     echo "INFO:  Finished $ZIP_DIR/$DISTRIBUTABLE_NAME"
 }
