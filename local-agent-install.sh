@@ -32,8 +32,6 @@ DEBUG_LOGS=true
 
 ################################################################################
 
-source ./utils/utilities.sh
-
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
 
@@ -455,6 +453,50 @@ stop-machineagent() {
 
     # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
     kill -9 `ps -ef | grep "machineagent.jar" | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
+}
+
+log-debug() {
+    if [ "$DEBUG_LOGS" = true ]; then
+        echo -e "DEBUG: $1"
+    fi
+}
+
+log-info() {
+    echo -e "INFO:  $1"
+}
+
+log-warn() {
+    echo -e "WARN:  $1"
+}
+
+log-error() {
+    echo -e "ERROR: \n       $1"
+}
+
+is-file-exists() {
+    if [ ! -f "$1" ]; then
+        echo "false"
+    else
+        echo "true"
+    fi
+}
+
+is-empty() {
+    local value="$1"
+
+    if [[ -z "${value// }" ]]; then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
+# Return exit code 0 if file is found, 1 if not found.
+check-file-exists() {
+    if [[ $(is-file-exists "$1") == "false" ]]; then
+        echo -e "ERROR: \n       File not found: $1"
+        exit 1
+    fi
 }
 
 # Execute the main function and get started
