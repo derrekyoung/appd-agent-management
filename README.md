@@ -1,6 +1,6 @@
 # AppDynamics Agent Management
 
-A collection of scripts to handle agent downloads, installs and upgrades. Will sync controller info, account info, and Analytics agent info.
+A collection of scripts to handle agent downloads, installs and upgrades.
 
 ## 5-Minute Getting Started
 
@@ -20,8 +20,6 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 && chmod u+x *.sh \
 && /bin/bash ./newbies-start-here.sh
 ```
-
-
 
 ## Requirements
 * Supported on Linux only. No Windows support
@@ -43,11 +41,14 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 * **Download** any appdynamics software by passing in the download URL
 
 
+## Download Latest
+https://github.com/derrekyoung/appd-agent-management/releases/latest
+
 
 # Table of Contents
 
 - [AppDynamics Agent Management](#)
-- 	  [Getting Started](#getting-started)
+- 	  [5- Minute Getting Started](#g5-minute-getting-started)
 	- [Capabilities](#capabilities)
 	- [Requirements](#requirements)
 - [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
