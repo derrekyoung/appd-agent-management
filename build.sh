@@ -11,39 +11,43 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 
 declare -a FILES=("README.md" \
     "download.sh" \
+    "fabfile.py" \
     "local-agent-install.sh" \
     "local-agent-config.sh" \
+    "start-here.sh" \
     "remote-agent-install.sh" \
-    "fabfile.py" \
     "conf/agent-configs/sample.properties" \
     "conf/remote-hosts/sample.json" \
+    "utils/latest-appdynamics-version.txt" \
     "utils/utilities.sh" \
-    "utils/latest-version.txt")
+    "utils/version.txt")
 
+PARENT_DIR="."
 DIST_DIR="./dist"
 DIST_TOP_FOLDER="appd-agent-management"
-ZIP_DIR="$DIST_DIR/$DIST_TOP_FOLDER"
-DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER-$VERSION.zip"
+# ZIP_DIR="$DIST_DIR"
+DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER.zip"
 
 
 copy-files() {
     for file in "${FILES[@]}"
     do
         # cp $file $ZIP_DIR/
-        rsync -R $file $ZIP_DIR/
+        rsync -R $file $DIST_DIR/
     done
 }
 
 replace-build-variables() {
     for file in "${FILES[@]}"
     do
-        sed -i -e "s/DEBUG_LOGS=true/DEBUG_LOGS=false/g" "$ZIP_DIR/$file"
-        sed -i -e "s/_VERSION_/$VERSION/g" "$ZIP_DIR/$file"
-        sed -i -e "s/_AUTHORS_/$AUTHORS/g" "$ZIP_DIR/$file"
+        # echo "$file"
+        sed -i -e "s/DEBUG_LOGS=true/DEBUG_LOGS=false/g" "$file"
+        sed -i -e "s/_VERSION_/$VERSION/g" "$file"
+        sed -i -e "s/_AUTHORS_/$AUTHORS/g" "$file"
 
         # Differences between Mac and Linux. Mac doesn't know the '-e'
-        if [[ -f "$ZIP_DIR/$file-e" ]]; then
-            rm "$ZIP_DIR/$file-e"
+        if [[ -f "$file-e" ]]; then
+            rm "$file-e"
         fi
     done
 }
@@ -60,22 +64,22 @@ dist() {
     # Make the dist dir
     if [ ! -d "$DIST_DIR" ]; then
         echo "INFO:  Making dist/ directory"
-        mkdir $DIST_DIR
+        mkdir -p $DIST_DIR
     fi
 
     # Create a top-level folder for unzipping the archive
-    echo "INFO:  Making $ZIP_DIR"
-    mkdir -p $ZIP_DIR
+    # echo "INFO:  Making $ZIP_DIR"
+    # mkdir -p $ZIP_DIR
 
     copy-files
 
+    cd $DIST_DIR/
     replace-build-variables
 
     echo "INFO:  Creating the Zip file..."
-    cd $DIST_DIR/$DIST_TOP_FOLDER/
     zip -r $DISTRIBUTABLE_NAME *
 
-    echo "INFO:  Finished $ZIP_DIR/$DISTRIBUTABLE_NAME"
+    echo "INFO:  Finished $DIST_DIR/$DISTRIBUTABLE_NAME"
 }
 
 dist
