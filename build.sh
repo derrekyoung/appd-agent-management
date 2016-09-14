@@ -9,31 +9,32 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 # Do not edit below this line
 ###############################################################################
 
+source ./utils/utilities.sh
+
+# PARENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# TLD=""
+DIST_DIR="./dist"
+DISTRIBUTABLE_NAME="appd-agent-management.zip"
+
 declare -a FILES=("README.md" \
+    "build.sh" \
     "download.sh" \
-    "fabfile.py" \
     "local-agent-install.sh" \
-    "local-agent-config.sh" \
     "newbies-start-here.sh" \
     "remote-agent-install.sh" \
     "conf/agent-configs/sample.properties" \
     "conf/remote-hosts/sample.json" \
+    "utils/fabfile.py" \
     "utils/latest-appdynamics-version.txt" \
+    "utils/local-agent-config.sh" \
     "utils/utilities.sh" \
     "utils/version.txt")
-
-PARENT_DIR="."
-DIST_DIR="./dist"
-DIST_TOP_FOLDER="appd-agent-management"
-# ZIP_DIR="$DIST_DIR"
-DISTRIBUTABLE_NAME="$DIST_TOP_FOLDER.zip"
-
 
 copy-files() {
     for file in "${FILES[@]}"
     do
         # cp $file $ZIP_DIR/
-        rsync -R $file $DIST_DIR/
+        rsync -R "$file" "$DIST_DIR/"
     done
 }
 
@@ -53,33 +54,29 @@ replace-build-variables() {
 }
 
 dist() {
-    echo -e "INFO:  Building version $VERSION"
+    log-info "Building version $VERSION"
 
     # Remove the existing dist dir
     if [ -d "$DIST_DIR" ]; then
-        echo "INFO:  Cleaning dist/ directory"
-        rm -R $DIST_DIR
+        log-info "Cleaning $DIST_DIR directory"
+        rm -R "$DIST_DIR"
     fi
 
     # Make the dist dir
     if [ ! -d "$DIST_DIR" ]; then
-        echo "INFO:  Making dist/ directory"
-        mkdir -p $DIST_DIR
+        log-info "Making $DIST_DIR directory"
+        mkdir -p "$DIST_DIR"
     fi
-
-    # Create a top-level folder for unzipping the archive
-    # echo "INFO:  Making $ZIP_DIR"
-    # mkdir -p $ZIP_DIR
 
     copy-files
 
-    cd $DIST_DIR/
+    cd "$DIST_DIR/"
     replace-build-variables
 
-    echo "INFO:  Creating the Zip file..."
-    zip -r $DISTRIBUTABLE_NAME *
+    log-info "Creating the Zip file..."
+    zip -r "$DISTRIBUTABLE_NAME" *
 
-    echo "INFO:  Finished $DIST_DIR/$DISTRIBUTABLE_NAME"
+    log-info "Finished $DIST_DIR/$DISTRIBUTABLE_NAME"
 }
 
 dist
