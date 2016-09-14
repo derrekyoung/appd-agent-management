@@ -21,13 +21,30 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 && /bin/bash ./newbies-start-here.sh
 ```
 
-## Requirements
+
+# Table of Contents
+
+- [AppDynamics Agent Management](#)
+- 	  [5- Minute Getting Started](#g5-minute-getting-started)
+- [Capabilities](#capabilities)
+- [Requirements](#requirements)
+- [Download Latest](#download-latest)
+- [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
+	- [Arguments and Settings](#arguments-and-settings)
+	- [Agent Configuration Properties](#agent-configuration-properties)
+- [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
+	- [Arguments and Settings](#arguments-and-settings-1)
+	- [Environment Config](#remote-environment-config)
+	- [Install Python Fabric](#install-python-fabric)
+- [Download AppDynamics Software](#download-appdynamics-software)
+
+# Requirements
 * Supported on Linux only. No Windows support
 * Python 2.7+ on the central distribution server
 * Python Fabric on the central distribution server
 * Unzip utility available on the destination servers
 
-## Capabilities
+# Capabilities
 * Install/upgrade the **Java** Agent
 * Install/upgrade the **Machine** Agent
     * Sync extensions after upgrade
@@ -42,23 +59,7 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 
 
 ## Download Latest
-https://github.com/derrekyoung/appd-agent-management/releases/latest
-
-
-# Table of Contents
-
-- [AppDynamics Agent Management](#)
-- 	  [5- Minute Getting Started](#g5-minute-getting-started)
-	- [Capabilities](#capabilities)
-	- [Requirements](#requirements)
-- [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
-	- [Arguments and Settings](#arguments-and-settings)
-	- [Agent Configuration Properties](#agent-configuration-properties)
-- [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
-	- [Arguments and Settings](#arguments-and-settings-1)
-	- [Environment Config](#remote-environment-config)
-	- [Install Python Fabric](#install-python-fabric)
-- [Download AppDynamics Software](#download-appdynamics-software)
+Fork/clone this repository or [download a zipped release](https://github.com/derrekyoung/appd-agent-management/releases/latest).
 
 # Install/Upgrade Agent Locally
 Operates on your local system. Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings.
