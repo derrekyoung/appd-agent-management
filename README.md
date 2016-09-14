@@ -2,44 +2,24 @@
 
 A collection of scripts to handle agent downloads, installs and upgrades. Will sync controller info, account info, and Analytics agent info.
 
-## Getting Started
+## 5-Minute Getting Started
 
-1. PreRequisites:
-	1. AppDynamics Users Account: email and password for agent download
-	1. Access to an AppDynamics Controller
-	
-1. Download the scripts:
+PreRequisites:
+	1. Email for your AppDynamics.com account
+	1. Password for your AppDynamics.com account
+	1. Login credentials to an AppDynamics Controller
 
-	Open a terminal and execute this command:
-	```BASH
-	curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download/v0.7-BETA/appd-agent-management-0.7-BETA.zip && unzip appd-agent-management-0.7-BETA.zip -d appd-home && cd appd-home && chmod u+x *.sh && ls -l && pwd && echo "Ready to download agents";
-	```
-1. Download the latest Java agent
 
-	In the same terminal, execute this command:
-	```BASH
-	./download.sh -u=https://aperture.appdynamics.com/download/prox/download-file/sun-jvm/4.2.6.0/AppServerAgent-4.2.6.0.zip
-	```
-1. Edit your Controller connection properties
-	1. Open a web browser and log in to your AppDynamics SaaS Controller
-	1. Open agent-config-sample.properties in a text editor
-		1. Change controller-host to your Controller hostname (no protocol or slashes)
-		1. Change account-name to your account name
-		1. Change account-access-key to your access key (Found on the License page in your Controller. Click the 'Show' link.)
-	1. Save the file.
 
-1. Install the Java agent
+Open a terminal and execute this command. Follow the on-screen prompts.
+```BASH
+curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download/latest/appd-agent-management.zip \
+&& unzip appd-agent-management.zip -d AppDynamics \
+&& cd AppDynamics \
+&& chmod u+x *.sh \
+&& /bin/bash ./newbies-start-here.sh
+```
 
-	In the same terminal, execute this command:
-	```BASH
-	./local-agent-install.sh -a=./archives/AppServerAgent-4.2.6.0.zip -c=agent-config-sample.properties
-	```
-
-1. Instrument your Java server
-
-	1. Open your Java server startup script in a text editor
-	1. Add the line -javaagent:[PATH_TO_APPD_HOME]/agents/appserveragent/javaagent.jar
-		* Edit PATH_TO_APPD_HOME to be the actual path to your appd-home
 
 
 ## Requirements
