@@ -31,6 +31,8 @@ AGENT_CONFIG_FILE=""
 
 source ./utils/utilities.sh
 
+SCRIPTS_ZIP_FILE="./dist/appd-agent-management.zip"
+
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
 
@@ -50,6 +52,10 @@ main() {
     prompt-for-args
     validate-args
 
+    mkdir -p logs/
+
+    /bin/bash ./build.sh > /dev/null 2>&1
+
     startDate=$(date '+%Y-%m-%d %H:%M:%S')
     SECONDS=0
     log-info "Started:  $startDate"
@@ -57,13 +63,19 @@ main() {
     local ENV_FILE=$(get-env-file "$ENV")
 
     # Call Python Fabric to do remote management
-    fab set_env:"$ENV_FILE" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME",agent_config_file="$AGENT_CONFIG_FILE"
+    fab --fabfile ./utils/fabfile.py \
+        set_env:"$ENV_FILE" \
+        check_host \
+        prep:archive="$ARCHIVE",scripts="$SCRIPTS_ZIP_FILE" \
+        install:archive="$ARCHIVE",config="$AGENT_CONFIG_FILE" \
+        cleanup:archive="$ARCHIVE",config="$AGENT_CONFIG_FILE" \
+        | tee logs/"$ENV-remote-install.log"
 
     # Clean up the compiled file
     rm -f fabfile.pyc
 
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
-    duration=$SECONDS
+    duration="$SECONDS"
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
 }
 
