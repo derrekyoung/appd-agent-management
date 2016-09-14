@@ -1,0 +1,1 @@
+AppDynamics Agent Management Scripts Version: _VERSION_
