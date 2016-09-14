@@ -163,10 +163,14 @@ http://www.fabfile.org/installing.html
 # Download AppDynamics Software
 This will prompt you for your username, password and the download URL. You can optionally set the values at the top of the script or pass in arguments.
 
-Usage: `./download.sh -e=foo@example.com -p=password123 -u=http://download.appdyanmcsi.com/javaagent-1.2.3.zip`
+Usage: `./download.sh`
 
-Arguments are optional. You will be prompted for values otherwise. Optionally hard code values in the script.
+Arguments are optional. You will be prompted for values otherwise.
 Optional params:
 * -e= Your AppDynamics username
 * -p= Your AppDynamics password
-* -u= Specific AppDynamics download URL
+* -v= Version, default to the latest version"
+* -t= Type of software {java, database, machine}"
+* -o= JVM type or OS type {sun, ibm, linux, osx}"
+* -b= Bitness {32, 64}"
+* -f= Format {zip, rpm}"
