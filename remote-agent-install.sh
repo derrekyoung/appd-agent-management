@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR"/utils/utilities.sh
+
 ################################################################################
 #
 # Utility script to deploy AppDynamics agents onto remote servers via Python Fabric.
@@ -28,8 +31,6 @@ AGENT_CONFIG_FILE=""
 
 
 ################################################################################
-
-source ./utils/utilities.sh
 
 SCRIPTS_ZIP_FILE="./dist/appd-agent-management.zip"
 

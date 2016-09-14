@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ./utils/local-agent-config.sh "test"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR"/utils/local-agent-config.sh "test"
 
 ################################################################################
 #
