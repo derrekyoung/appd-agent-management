@@ -1,10 +1,12 @@
 {
     "__comments" : [
-        "user: (optional) The default, implicit username for the remote hosts. Use this if all usernames will be the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME"
+        "appd-home: The AppDynamics home directory for the remote servers, where to install the software."
+        ,"user: (optional) The default, implicit username for the remote hosts. Use this if all usernames will be the same. Otherwise, specify the username as part of the hostname using the format username@HOSTNAME"
         ,"passwords: You will be prompted for passwords interactively. Do not enter them here"
         ,"key_filename: (optional) A list of SSH keys to access the remote hosts"
         ,"hosts: REQUIRED A list of remote hosts. Can be in the format of simple hostnames or as username@hostname where you specify an explicit username to override the default username"
     ]
+    ,"appd-home": "/opt/AppDynamics"
     ,"user": "user1"
     ,"key_filename": [
         "./my-key1.pem"
