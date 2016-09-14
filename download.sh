@@ -104,7 +104,7 @@ parse-args() {
                 shift # past argument=value
                 ;;
             *)
-                echo "Error parsing argument $1" >&2
+                log-error "Error parsing argument $1" >&2
                 usage
                 exit 1
             ;;
@@ -113,10 +113,12 @@ parse-args() {
 }
 
 build-url() {
+    # DB agent
     if [[ "$DESIRED_TYPE" == "$PARAM_DATABASE" ]]; then
         URL="$URL_DATABASE_AGENT"
     fi
 
+    # Java agent
     if [[ "$DESIRED_TYPE" == "$PARAM_JAVA" ]]; then
         if [[ "$DESIRED_OS" == "$PARAM_IBM" ]]; then
             URL="$URL_JAVA_AGENT_IBM"
@@ -125,6 +127,7 @@ build-url() {
         fi
     fi
 
+    # Machine agent
     if [[ "$DESIRED_TYPE" == "$PARAM_MACHINE" ]]; then
         if [[ "$DESIRED_OS" == "$PARAM_LINUX" ]]; then
             if [[ "$DESIRED_BITNESS" == "$PARAM_32BIT" ]]; then
@@ -150,7 +153,6 @@ prompt-for-credentials() {
     while [[ -z "$PASSWORD" ]]
     do
         echo -n "Enter your AppDynamics password: "
-        # read -s PASSWORD
         unset PASSWORD
         while IFS= read -p "$prompt" -r -s -n 1 char
         do
@@ -177,7 +179,7 @@ prompt-for-version() {
         fi
     done
 
-    # echo $DESIRED_VERSION
+    log-debug "Version=$DESIRED_VERSION"
 }
 
 prompt-for-type() {
@@ -207,14 +209,15 @@ prompt-for-type() {
 		esac
 	done
 
-    # echo "DESIRED_TYPE=$DESIRED_TYPE"
+    log-debug "DESIRED_TYPE=$DESIRED_TYPE"
 }
 
 prompt-for-details() {
     prompt-for-java
     prompt-for-machine
     prompt-for-database
-    # echo "URL=$URL"
+
+    log-debug "URL=$URL"
 }
 
 prompt-for-java() {
@@ -285,9 +288,11 @@ prompt-for-database() {
 }
 
 replace-url() {
-    # echo "replacing $URL with $VERSION_TOKEN"
+    log-debug "Replacing $URL with $VERSION_TOKEN"
+
     URL=$(echo "$URL" | sed -e s%$VERSION_TOKEN%$DESIRED_VERSION%g)
-    # echo "Done. $URL"
+
+    log-debug "Done. $URL"
 }
 
 DOWNLOAD_HOME="./archives"
