@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./local-agent-config.sh "test"
+source ./utils/local-agent-config.sh "test"
 
 ################################################################################
 #
@@ -101,7 +101,7 @@ main() {
 
     start-agent "$SYMLINK"
 
-    log-info "Agent install finished: $fileAndVersionLowercase"
+    log-info "FINISHED: Installed $fileAndVersionLowercase into $SYMLINK"
 }
 
 parse-args() {
