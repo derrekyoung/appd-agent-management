@@ -14,7 +14,7 @@ declare -a FILES=("README.md" \
     "fabfile.py" \
     "local-agent-install.sh" \
     "local-agent-config.sh" \
-    "start-here.sh" \
+    "newbies-start-here.sh" \
     "remote-agent-install.sh" \
     "conf/agent-configs/sample.properties" \
     "conf/remote-hosts/sample.json" \
