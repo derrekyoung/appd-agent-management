@@ -53,7 +53,7 @@ main() {
 
     create-agent-config
 
-    echo -e "\nReady to download and install your software"
+    echo -e "\nReady to download and locally install your Java and Machine agents"
     echo -e "Press enter to continue"
     read -p ""
 
@@ -67,17 +67,19 @@ main() {
     # install-database-agent
 
     echo -e ""
-    echo -e "AppDynamics downloaded and installed the Java and Machine agents. Follow these instructions to complete the process:"
+    echo -e "AppDynamics downloaded and installed the Java and Machine agents."
+    echo -e ""
+    echo -e "Follow these instructions to complete the process and configure your application:"
     echo -e "Java agent: "
-    echo -e "   - Add '-javaagent:$(pwd)/agents/javaagent/javagent.jar' to the startup script of your Java application server"
-    echo -e "   - Restart your app server"
-    echo -e "   - Then use your app and drive traffic through it"
-    echo -e "   - You should start seeing metrics in your Controller"
-    echo -e "   Docs: https://docs.appdynamics.com/display/PRO42/Instrument+Java+Applications"
+    echo -e "   1) Add '-javaagent:$(pwd)/agents/javaagent/javagent.jar' to the startup script of your Java application server"
+    echo -e "   2) Restart your app server"
+    echo -e "   3) Then use your app and drive traffic through it"
+    echo -e "   4) You should start seeing metrics in your Controller"
+    echo -e "   https://docs.appdynamics.com/display/PRO42/Instrument+Java+Applications"
     echo -e ""
     echo -e "Machine agent:"
-    echo -e "   - You should immediately start seeing metrics in your Controller"
-    echo -e "   Docs: https://docs.appdynamics.com/display/PRO42/Install+the+Standalone+Machine+Agent"
+    echo -e "   1) You should immediately start seeing metrics in your Controller"
+    echo -e "   https://docs.appdynamics.com/display/PRO42/Install+the+Standalone+Machine+Agent"
     echo -e ""
     echo -e "Thank you and enjoy! \n"
 }
