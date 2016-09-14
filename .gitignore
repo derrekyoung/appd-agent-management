@@ -5,6 +5,7 @@
 agents/
 archives/
 dist/
+logs/
 tmp/
 
 conf/agent-configs/*.properties
