@@ -5,9 +5,10 @@ A collection of scripts to handle agent downloads, installs and upgrades. Will s
 ## 5-Minute Getting Started
 
 PreRequisites:
-	1. Email for your AppDynamics.com account
-	1. Password for your AppDynamics.com account
-	1. Login credentials to an AppDynamics Controller
+
+1. **Email** for your AppDynamics.com account
+1. **Password** for your AppDynamics.com account
+1. AppDynamics Controller **host** name, **account** name, **access key**
 
 
 
