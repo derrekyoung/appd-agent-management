@@ -145,8 +145,8 @@ def check_host():
     run('echo "Host is valid"')
 
 @task
-def set_env(env_str):
-    file = './conf/remote-hosts/'+str(env_str)+'.json'
+def set_env(env_file):
+    file = env_file
 
     with open(file, 'r') as json_data:
         env_data = json.load(json_data)

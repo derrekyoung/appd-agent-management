@@ -54,8 +54,10 @@ main() {
     SECONDS=0
     log-info "Started:  $startDate"
 
+    local ENV_FILE=$(get-env-file "$ENV")
+
     # Call Python Fabric to do remote management
-    fab set_env:"$ENV" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME",agent_config_file="$AGENT_CONFIG_FILE"
+    fab set_env:"$ENV_FILE" check_host deploy_agent:archive="$ARCHIVE",appd_home_dir="$REMOTE_APPD_HOME",agent_config_file="$AGENT_CONFIG_FILE"
 
     # Clean up the compiled file
     rm -f fabfile.pyc
@@ -102,7 +104,7 @@ prompt-for-args() {
         log-info "Enter the environment config name: "
         read -r ENV
 
-        local ENV_FILE="./remote-config-$ENV.json"
+        local ENV_FILE=$(get-env-file "$ENV")
         if [[ ! -f "$ENV_FILE" ]]; then
             log-warn "Environment file not found, $ENV_FILE"
             ENV=""
@@ -137,6 +139,13 @@ prompt-for-args() {
             AGENT_CONFIG_FILE=""
         fi
     fi
+}
+
+get-env-file() {
+    local env="$1"
+    local envFile="./conf/remote-hosts/$env.json"
+
+    echo "$envFile"
 }
 
 validate-args() {
