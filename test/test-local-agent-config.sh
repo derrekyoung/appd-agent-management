@@ -2,10 +2,10 @@
 
 # Put the script into test mode and surpress log output
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/"../utils/local-agent-config.sh "test"
+source "$DIR/../utils/local-agent-config.sh" "test"
 
 # Set up the test variables
-APPD_AGENT_HOME="./tmp"
+APPD_AGENT_HOME="$DIR/tmp"
 DEBUG_LOGS=false
 
 # Files to test upon
@@ -26,11 +26,11 @@ setup-test() {
 
     # Create APPD_AGENT_HOME if not exists
     if [ ! -d "$APPD_AGENT_HOME" ]; then
-        mkdir $APPD_AGENT_HOME
+        mkdir "$APPD_AGENT_HOME"
     fi
 
-    cp ./resources/*.properties $APPD_AGENT_HOME
-    cp ./resources/*.xml $APPD_AGENT_HOME
+    cp ./resources/*.properties "$APPD_AGENT_HOME"
+    cp ./resources/*.xml "$APPD_AGENT_HOME"
 
     # Helpful output
     echo "TESTING: $1()"
@@ -40,7 +40,7 @@ setup-test() {
 teardown-test() {
     # Remove APPD_AGENT_HOME
     if [ -d "$APPD_AGENT_HOME" ]; then
-        rm -rf $APPD_AGENT_HOME
+        rm -rf "$APPD_AGENT_HOME"
     fi
 
     echo " "
