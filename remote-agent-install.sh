@@ -53,10 +53,13 @@ main() {
     prompt-for-args
     validate-args
 
+    # Make the logs dir
     mkdir -p logs/
 
+    # Build the archive so we can upload it later
     /bin/bash ./build.sh > /dev/null 2>&1
 
+    # Start the process
     startDate=$(date '+%Y-%m-%d %H:%M:%S')
     SECONDS=0
     log-info "Started:  $startDate"
@@ -75,6 +78,7 @@ main() {
     # Clean up the compiled file
     rm -f fabfile.pyc
 
+    # Finished
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
     duration="$SECONDS"
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
