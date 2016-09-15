@@ -257,3 +257,14 @@ test-read-value-in-property-file "$ANALYTICS_AGENT_PROPERTIES" "http.event.acces
 
 teardown-test
 #############################################################################
+
+
+
+#############################################################################
+setup-test "list-all-files"
+
+files=$(list-all-files "$APPD_AGENT_HOME" | wc -l)
+test_equals "       7" "$files"
+
+teardown-test
+#############################################################################
