@@ -6,9 +6,11 @@ A collection of scripts to handle agent downloads, installs and upgrades.
 
 PreRequisites:
 
-1. **Email** for your AppDynamics.com account
+1. **Email** address for your AppDynamics.com account
 1. **Password** for your AppDynamics.com account
-1. AppDynamics Controller **host** name, **account** name, **access key**
+1. Your AppDynamics Controller **host name**
+1. Your AppDynamics Controller **account name**
+1. Your AppDynamics Controller **account access key**
 
 
 
