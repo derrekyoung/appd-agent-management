@@ -11,6 +11,7 @@ PreRequisites:
 1. Your AppDynamics Controller **host name**
 1. Your AppDynamics Controller **account name**
 1. Your AppDynamics Controller **account access key**
+1. "curl" command needs to be installed on your host
 
 
 
