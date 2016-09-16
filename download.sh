@@ -1,4 +1,7 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR"/utils/utilities.sh
+set -ea
 
 ################################################################################
 #
@@ -21,7 +24,8 @@ DEBUG_LOGS=true
 # Do Not Edit Below This Line
 ################################################################################
 
-source ./utils/utilities.sh
+# Maybe this was overwritten
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 usage() {
     echo "Usage: $0 [-e=email] [-p=password] [-v=version] [[-t=type [-o=linux|osx] [-b=bitness] [-f=format]"
@@ -37,6 +41,11 @@ usage() {
 }
 
 main() {
+    # We want to be able to test individual components so this will exit out if passed in 'test'
+    if [[ "$1" == "test" ]]; then
+        return
+    fi
+
     parse-args "$@"
     prompt-for-credentials
     build-url
@@ -288,7 +297,8 @@ prompt-for-database() {
 }
 
 replace-url() {
-    log-debug "Replacing $URL with $VERSION_TOKEN"
+    log-debug "Download $URL"
+    log-debug "Replacing $VERSION_TOKEN with $DESIRED_VERSION"
 
     URL=$(echo "$URL" | sed -e s%$VERSION_TOKEN%$DESIRED_VERSION%g)
 
