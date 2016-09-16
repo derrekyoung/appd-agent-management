@@ -1,8 +1,7 @@
 #!/bin/bash
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR"/utils/local-agent-config.sh "test"
-
+set -ae
 
 ################################################################################
 #
@@ -24,8 +23,6 @@ source "$DIR"/utils/local-agent-config.sh "test"
 # Install directory for the AppDynamics agents. The default is where ever you run this script.
 APPD_AGENT_HOME="./agents"
 
-AGENT_CONFIG_FILE=""
-
 # Flag to toggle debug logging. Values= true|false
 DEBUG_LOGS=true
 
@@ -36,6 +33,9 @@ DEBUG_LOGS=true
 
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
+
+# The agent configuration properties file
+AGENT_CONFIG_FILE=""
 
 # Set to true if this is an agent upgrade
 IS_UPGRADE=false
@@ -416,16 +416,24 @@ start-dbagent() {
         java=$(which java)
     fi
 
-    log-debug "Starting the Database agent with $java $($java -version)"
+    log-info "Starting the Database agent with $java $($java -version)"
 
     nohup $java -Dappdynamics.agent.uniqueHostId="$HOSTNAME" -Ddbagent.name="$HOSTNAME" -jar $agentDir/db-agent.jar > /dev/null 2>&1 &
 }
 
 stop-dbagent() {
-    log-debug "Stopping the Database agent"
+    local process="db-agent.jar"
+
+    local running=$(ps -ef | grep "$process" | grep -v grep)
+    if [[ -z "$running" ]]; then
+        log-debug "$process is NOT running"
+        return
+    fi
+
+    log-info "Stopping the Database agent"
 
     # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
-    kill -9 `ps -ef | grep "db-agent.jar" | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
+    kill -9 `$running | awk '{print $2}'` > /dev/null 2>&1
 }
 
 start-machineagent() {
@@ -441,7 +449,7 @@ start-machineagent() {
         java=$(which java)
     fi
 
-    log-debug "Starting the Machine agent with $java $($java -version)"
+    log-info "Starting the Machine agent with $java $($java -version)"
 
     # Remove the Analytics agent PID
     rm -f "$agentHome"/monitors/analytics-agent/analytics-agent.id
@@ -451,10 +459,18 @@ start-machineagent() {
 }
 
 stop-machineagent() {
-    log-debug "Stopping the Machine agent"
+    local process="machineagent.jar"
+
+    local running=$(ps -ef | grep "$process" | grep -v grep)
+    if [[ -z "$running" ]]; then
+        log-debug "$process is NOT running"
+        return
+    fi
+
+    log-info "Stopping the Machine agent"
 
     # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
-    kill -9 `ps -ef | grep "machineagent.jar" | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
+    kill -9 `$running | awk '{print $2}'` > /dev/null 2>&1
 }
 
 # Execute the main function and get started
