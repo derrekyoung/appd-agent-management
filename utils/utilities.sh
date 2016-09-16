@@ -1,6 +1,15 @@
 #!/bin/bash
 
 ################################################################################
+# String Manipulation
+trim-whitespace() {
+    local input="$1"
+    local result=$("$input" | sed 's/^ *//g' | sed 's/ *$//g')
+
+    echo "$result"
+}
+
+################################################################################
 # Properties Files
 read-value-in-property-file() {
     local file="$1"
@@ -26,6 +35,27 @@ update-value-in-property-file() {
 
     local result=$(read-value-in-property-file "$file" "$property")
     echo "$result"
+}
+
+update-value-in-property-file-with-validation() {
+    local propsFile="$1"
+    local prop="$2"
+    local value="$3"
+    local result=""
+
+    log-debug "Setting $prop=$value"
+
+    result=$(update-value-in-property-file "$propsFile" "$prop" "$value")
+
+    # log-debug "After update, $prop=$result"
+
+    if [[ "$value" != "$result" ]]; then
+        log-warn "Failed to update property $prop. Expected: '$value'. Actual: '$result'"
+    fi
+
+    if [[ -f "$propsFile-e" ]]; then
+        rm -f "$propsFile-e"
+    fi
 }
 
 ################################################################################
