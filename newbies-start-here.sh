@@ -1,57 +1,47 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR"/utils/utilities.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR"/utils/local-agent-config.sh "test"
+set -ea
 
 ###############################################################################
 #
 # Script to help those brand new to AppDynamics.
 #
 # Usage:
-#   ./start-here.sh
+#   ./newbies-start-here.sh
 #
 ###############################################################################
 
-
 # Flag to toggle debug logging. Values= true|false
 DEBUG_LOGS=true
-
 
 
 ###############################################################################
 # Do not edit below this line
 ###############################################################################
 
-source ./utils/utilities.sh
-
-# AGENT_MANAGEMENT_VERSION="0.7-BETA"
 LATEST_APPD_VERSION=""
-
 EMAIL=""
 PASSWORD=""
 
-CONTROLLER_HOST=""
-CONTROLLER_PORT=""
-CONTROLLER_SSL_ENABLED=""
-ACCOUNT_NAME=""
-ACCOUNT_ACCESS_KEY=""
-
-DEFAULT_SAAS_CONTROLLER_PORT="443"
-DEFAULT_SAAS_CONTROLLER_SSL_ENABLED="true"
-DEFAULT_ON_PREM_CONTROLLER_PORT="8090"
-DEFAULT_ON_PREM_CONTROLLER_SSL_ENABLED="false"
-
-AGENT_CONFIG_FILE=""
-
-DOWNLOAD_SCRIPT="./download.sh"
-INSTALL_SCRIPT="./local-agent-install.sh"
+# Maybe this was overwritten
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DOWNLOAD_SCRIPT="$DIR/download.sh"
+INSTALL_SCRIPT="$DIR/local-agent-install.sh"
+# AGENT_CONFIG_SCRIPT="$DIR/utils/local-agent-config.sh"
 
 main() {
+    echo "$DOWNLOAD_SCRIPT"
+    echo "$INSTALL_SCRIPT"
     show-prerequisites
 
     set-latest-appd-version
-    prompt-for-args
 
-    # download-agent-management-suite
-
-    create-agent-config
+    prompt-for-credentials
+    agent-config-start -t="create"
+    cd "$DIR"
 
     echo -e "\nReady to download and locally install your Java and Machine agents"
     echo -e "Press enter to continue"
@@ -89,18 +79,21 @@ show-prerequisites() {
     echo " "
     echo -e "Welcome to AppDynamics! "
     echo -e "Before we start, there are a few minor prerequisites:"
-    echo -e "  * Username for AppDynamics.com"
+    echo -e "  * Email address for AppDynamics.com"
     echo -e "  * Password for AppDynamics.com"
-    echo -e "  * Login credentials to an AppDynamics Controller"
+    echo -e "  * Your AppDynamics Controller host name"
+    echo -e "  * Your AppDynamics Controller account name"
+    echo -e "  * Your AppDynamics Controller account access key"
     echo -e ""
 
     local msg="Do you want to continue? [yes/no]"
 
     while [[ true ]]
     do
-    	echo "1) Yes, continue. I'm ready!"
-        echo "2) No, let's do this another time."
-      	read -p "$msg: " option
+        echo "$msg"
+    	echo "  1) Yes, continue. I'm ready!"
+        echo "  2) No, let's do this another time."
+      	read -p "" option
 
 		case "$option" in
 			1|y|yes)
@@ -113,13 +106,12 @@ show-prerequisites() {
                 ;;
 			*)
 				echo " "
-				echo "$msg: "
 				;;
 		esac
 	done
 }
 
-prompt-for-args() {
+prompt-for-credentials() {
     # if empty then prompt
     while [[ -z "$EMAIL" ]]
     do
@@ -143,58 +135,22 @@ prompt-for-args() {
         done
         echo
     done
-
-    # Prompt for controller info
-    # controller-host
-    # account-name
-    # account-access-key
-    while [[ -z "$CONTROLLER_HOST" ]]
-    do
-        echo -n "Enter your AppDynamics Controller hostname: "
-        read -r CONTROLLER_HOST
-
-        # remove http/s, trailing slash, trim whitespace
-    done
-
-    while [[ -z "$ACCOUNT_NAME" ]]
-    do
-        echo -n "Enter your AppDynamics Controller account name: "
-        read -r ACCOUNT_NAME
-
-        # trim whitespace
-    done
-
-    while [[ -z "$ACCOUNT_ACCESS_KEY" ]]
-    do
-        echo -n "Enter your AppDynamics Controller access key: "
-        read -r ACCOUNT_ACCESS_KEY
-
-        # trim whitespace
-    done
-
-    # controller-port
-    # controller-ssl-enabled
 }
 
-# Download the script suite
-download-agent-management-suite() {
-    local archive="appd-agent-management.zip"
-    local url="https://github.com/derrekyoung/appd-agent-management/releases/download/latest/$archive"
-
-    log-info "Downloading the scripts from $url"
-
-    curl -LOk $url
-    unzip "$archive"
-    chmod u+x *.sh
-
-    log-info "Cleaning up $archive"
-    rm -f "$archive"
-}
-
-# Create an agent/controller config file based on the input received
-create-agent-config() {
-    log-debug "Creating agent config"
-}
+# # Download the script suite
+# download-agent-management-suite() {
+#     local archive="appd-agent-management.zip"
+#     local url="https://github.com/derrekyoung/appd-agent-management/releases/download/latest/$archive"
+#
+#     log-info "Downloading the scripts from $url"
+#
+#     curl -LOk $url
+#     unzip "$archive"
+#     chmod u+x *.sh
+#
+#     log-info "Cleaning up $archive"
+#     rm -f "$archive"
+# }
 
 
 # Download the Java agent
@@ -276,14 +232,18 @@ set-latest-appd-version() {
     local url="https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/utils/$fileName"
     local version=""
 
+    log-info "Checking for the latest version of AppDynamics"
+
+    set +e
     curl -LOks --connect-timeout 5 $url
-    if [ 0 -eq $? ]; then
+    if [[ 0 -eq $? ]]; then
         version=$(cat "$fileName")
 
         log-debug "Got version from GitHub: $version"
 
         rm -f "$fileName"
     fi
+    set -e
 
     if [[ "$version" != 4.* ]]; then
         version=$(cat ./utils/"$fileName")
