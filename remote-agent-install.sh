@@ -1,7 +1,8 @@
 #!/bin/bash
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR"/utils/utilities.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+set -ea
 
 ################################################################################
 #
@@ -32,7 +33,7 @@ AGENT_CONFIG_FILE=""
 
 ################################################################################
 
-SCRIPTS_ZIP_FILE="./dist/appd-agent-management.zip"
+SCRIPTS_ZIP_FILE="$DIR/dist/appd-agent-management.zip"
 
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
@@ -76,7 +77,7 @@ main() {
         | tee logs/"$ENV-remote-install.log"
 
     # Clean up the compiled file
-    rm -f fabfile.pyc
+    rm -f "$DIR"/utils/fabfile.pyc
 
     # Finished
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
@@ -148,7 +149,7 @@ prompt-for-args() {
     done
 
     if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
-        log-info "Do you wish to update agent properties? Enter the agent config file name or leave blank:"
+        log-info "Do you wish to update agent properties? Enter the agent config name or leave blank:"
         read -r AGENT_CONFIG_FILE
 
         if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
@@ -161,6 +162,13 @@ prompt-for-args() {
 get-env-file() {
     local env="$1"
     local envFile="./conf/remote-hosts/$env.json"
+
+    echo "$envFile"
+}
+
+get-agent-config-file() {
+    local env="$1"
+    local envFile="./conf/agent-configs/$env.properties"
 
     echo "$envFile"
 }
