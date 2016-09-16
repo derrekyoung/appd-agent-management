@@ -33,18 +33,17 @@ INSTALL_SCRIPT="$DIR/local-agent-install.sh"
 # AGENT_CONFIG_SCRIPT="$DIR/utils/local-agent-config.sh"
 
 main() {
-    echo "$DOWNLOAD_SCRIPT"
-    echo "$INSTALL_SCRIPT"
     show-prerequisites
-
-    set-latest-appd-version
 
     prompt-for-credentials
     agent-config-start -t="create"
     cd "$DIR"
 
-    echo -e "\nReady to download and locally install your Java and Machine agents"
-    echo -e "Press enter to continue"
+    set-latest-appd-version
+
+    echo ""
+    log-info "Ready to download and locally install your Java and Machine agents"
+    log-info "Press enter to continue"
     read -p ""
 
     download-java-agent
@@ -57,13 +56,13 @@ main() {
     # install-database-agent
 
     echo -e ""
-    echo -e "AppDynamics downloaded and installed the Java and Machine agents."
+    echo -e "Hooray! AppDynamics downloaded and installed the Java and Machine agents."
     echo -e ""
     echo -e "Follow these instructions to complete the process and configure your application:"
     echo -e "Java agent: "
     echo -e "   1) Add '-javaagent:$(pwd)/agents/javaagent/javagent.jar' to the startup script of your Java application server"
     echo -e "   2) Restart your app server"
-    echo -e "   3) Then use your app and drive traffic through it"
+    echo -e "   3) Then open your app and push some traffic through it"
     echo -e "   4) You should start seeing metrics in your Controller"
     echo -e "   https://docs.appdynamics.com/display/PRO42/Instrument+Java+Applications"
     echo -e ""
@@ -157,6 +156,7 @@ prompt-for-credentials() {
 download-java-agent() {
     log-info "Downloading the Java agent, version $LATEST_APPD_VERSION"
     /bin/bash "$DOWNLOAD_SCRIPT" -e="$EMAIL" -p="$PASSWORD" -t="java" -v="$LATEST_APPD_VERSION" -o="sun"
+    log-info "SUCCESS: Java agent downloaded\n"
 }
 
 install-java-agent() {
@@ -176,6 +176,7 @@ download-machine-agent() {
     local os=$(get-operating-system)
 
     /bin/bash "$DOWNLOAD_SCRIPT" -e="$EMAIL" -p="$PASSWORD" -t="machine" -v="$LATEST_APPD_VERSION" -o="$os" -b="64" -f="zip"
+    log-info "SUCCESS: Machine agent downloaded\n"
 }
 
 install-machine-agent() {
@@ -193,12 +194,14 @@ download-database-agent() {
     log-info "Downloading the Database agent, version $LATEST_APPD_VERSION"
 
     /bin/bash "$DOWNLOAD_SCRIPT" -e="$EMAIL" -p="$PASSWORD" -t="database" -v="$LATEST_APPD_VERSION"
+    log-info "SUCCESS: Database agent downloaded\n"
 }
 
 install-database-agent() {
     local archive=$(find ./archives -name 'dbagent*' | sort | tail -1)
 
     log-info "Installing the Database agent"
+
     /bin/bash "$INSTALL_SCRIPT" -a="$archive" -c="$AGENT_CONFIG_FILE" > /dev/null 2>&1
 
     log-info "SUCCESS: Database agent installed\n"
@@ -252,7 +255,7 @@ set-latest-appd-version() {
 
     LATEST_APPD_VERSION="$version"
 
-    log-debug "Latest known version: $version"
+    log-info "Latest known version of AppDynamics: $version"
 }
 
 # Execute the main function and get started

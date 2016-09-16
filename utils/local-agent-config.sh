@@ -284,6 +284,7 @@ create-agent-properties() {
 
     AGENT_CONFIG_FILE="$AGENT_CONF_DIR/$newPropsFile"
 
+    echo ""
     log-info "Created agent configuration file at $AGENT_CONF_DIR/$newPropsFile"
 }
 
