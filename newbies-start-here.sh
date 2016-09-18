@@ -1,8 +1,8 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utils/utilities.sh
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utils/local-agent-config.sh "test"
+SH_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$SH_DIR"/utils/utilities.sh
+SH_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$SH_DIR"/utils/local-agent-config.sh "test"
 set -ea
 
 ###############################################################################
@@ -34,16 +34,16 @@ PASSWORD=""
 
 # Maybe this was overwritten
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DOWNLOAD_SCRIPT="$DIR/download.sh"
-INSTALL_SCRIPT="$DIR/local-agent-install.sh"
-# AGENT_CONFIG_SCRIPT="$DIR/utils/local-agent-config.sh"
+DOWNLOAD_SCRIPT="$SH_DIR/download.sh"
+INSTALL_SCRIPT="$SH_DIR/local-agent-install.sh"
+# AGENT_CONFIG_SCRIPT="$SH_DIR/utils/local-agent-config.sh"
 
 main() {
     show-prerequisites
 
     prompt-for-credentials
     agent-config-start -t="create"
-    cd "$DIR"
+    cd "$SH_DIR"
 
     set-latest-appd-version
 
