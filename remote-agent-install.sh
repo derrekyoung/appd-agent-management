@@ -123,6 +123,7 @@ rai_prompt-for-args() {
     # if empty then prompt
     while [[ -z "$ENV" ]]
     do
+        list-known-remote-hosts-configs
         log-info "Enter the environment config name: "
         read -r ENV
 
@@ -153,14 +154,48 @@ rai_prompt-for-args() {
     done
 
     if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
+        echo ""
         log-info "Do you wish to update remote agent properties? Enter the agent config name or leave blank:"
+        list-known-agent-configs
+
+        log-info "Which agent config file?"
         read -r AGENT_CONFIG_FILE
+
+        if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+            log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+        else
+            AGENT_CONFIG_FILE=$(get-agent-config-file "$AGENT_CONFIG_FILE")
+            if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+                log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+            else
+                AGENT_CONFIG_FILE=""
+            fi
+        fi
 
         if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
             log-warn "Agent config file not found, $AGENT_CONFIG_FILE"
             AGENT_CONFIG_FILE=""
         fi
     fi
+}
+
+list-known-remote-hosts-configs() {
+    local configFiles=$(list-all-remote-hosts-configs)
+    configFiles=$(get-everything-after-last-slash "$configFiles")
+    configFiles=$(drop-properties-extension "$configFiles")
+    configFiles=$(echo "$configFiles" | grep -v sample)
+
+    if [[ "$configFiles" ]]; then
+        log-info "\nAvailable remote hosts configuration files:"
+
+        echo -e "$configFiles" | while read line; do
+            echo -e "  - $line"
+        done
+    fi
+}
+
+list-all-remote-hosts-configs() {
+    list-all-files "$REMOTE_HOSTS_CONF_DIR"
 }
 
 get-remote-hosts-file() {

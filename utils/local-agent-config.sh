@@ -1,6 +1,7 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utilities.sh
+LAC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$LAC_DIR"/utilities.sh
+LAC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -ea
 
 ################################################################################
@@ -26,9 +27,6 @@ DEBUG_LOGS=true
 #   Do Not Edit Below This Line
 ################################################################################
 
-# Maybe this was overwritten
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 # Install directory for the AppDynamics agents. The default is where ever you run this script.
 APPD_AGENT_HOME=""
 
@@ -50,22 +48,21 @@ DEFAULT_ON_PREM_CONTROLLER_PORT="8090"
 DEFAULT_ON_PREM_CONTROLLER_SSL_ENABLED="false"
 DEFAULT_ON_PREM_CONTROLLER_ACCOUNT_NAME="customer1"
 
-AGENT_CONF_DIR="$DIR/../conf/agent-configs"
+AGENT_CONF_DIR="$LAC_DIR/../conf/agent-configs"
 SAMPLE_AGENT_CONF="sample.properties"
-REMOTE_HOSTS_CONF_DIR="$DIR/../conf/remote-hosts"
+REMOTE_HOSTS_CONF_DIR="$LAC_DIR/../conf/remote-hosts"
 SAMPLE_REMOTE_HOSTS_CONF="sample.json"
 
 ACTION_CREATE="create"
 ACTION_UPDATE="update"
 
 usage() {
-    echo "Usage: $0 [-t={create,update}] [-c=Path to config file] [-h=AppD home]"
-    echo "Install/upgrade AppDynamics agents."
-    echo "Optional params:"
-    echo "    -t|--task= {create,update} The action to take: create new agent config file, update an agent in place"
-    echo "    -c|--config= Agent properties configuration file"
-    echo "    -h|--home= Local AppDynamics home directory"
-    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
+    echo -e "Install/upgrade AppDynamics agents."
+    echo -e "\nUsage: $0"
+    echo -e "\nOptional params:"
+    echo -e "    -t|--task= {$ACTION_CREATE,$ACTION_UPDATE} The action to take: create new agent config file, update an agent in place"
+    echo -e "    -c|--config= Agent properties configuration file"
+    echo -e "    -h|--home= Local AppDynamics home directory"
 }
 
 # Turning on test mode will surpress all log statements
@@ -82,8 +79,8 @@ main() {
 }
 
 agent-config-start() {
-    parse-args "$@"
-    prompt-for-args
+    lac_parse-args "$@"
+    lac_prompt-for-args
 
     if [[ "$ACTION" == "$ACTION_UPDATE" ]]; then
         prompt-for-args-update
@@ -96,7 +93,7 @@ agent-config-start() {
     fi
 }
 
-parse-args() {
+lac_parse-args() {
     # Grab arguments in case there are any
     for i in "$@"
     do
@@ -157,14 +154,14 @@ parse-args() {
     done
 }
 
-prompt-for-args() {
+lac_prompt-for-args() {
     local msg="Create or update?"
 
     while [[ -z "$ACTION" ]]
     do
-        echo "$msg"
-        echo "  1) Create a new agent config file"
-        echo "  2) Update an existing agent config file"
+        echo -e "$msg"
+        echo -e "  1) Create a new agent config file"
+        echo -e "  2) Update an existing agent config file"
       	read -p "" ACTION
 
 		case "$ACTION" in
@@ -175,7 +172,7 @@ prompt-for-args() {
                 ACTION="$ACTION_UPDATE"
 				;;
 			*)
-                echo " "
+                echo -e " "
 				;;
 		esac
 	done
@@ -185,14 +182,14 @@ prompt-for-args-create() {
     local port=""
     local customer=""
 
-    echo " "
+    echo -e " "
 
     while [[ -z "$ZONE" ]]
     do
         local msg="Where is your controller? "
-        echo "$msg"
-        echo "  1) SaaS (aka hosted by AppDynamics)"
-        echo "  2) On Premises (aka you installed it)"
+        echo -e "$msg"
+        echo -e "  1) SaaS (aka hosted by AppDynamics)"
+        echo -e "  2) On Premises (aka you installed it)"
       	read -p "" ZONE
 
 		case "$ZONE" in
@@ -203,7 +200,7 @@ prompt-for-args-create() {
                 ZONE="$ZONE_ONPREM"
 				;;
 			*)
-                echo " "
+                echo -e " "
 				;;
 		esac
     done
@@ -292,27 +289,69 @@ prompt-for-args-update() {
     # if empty then prompt
     while [[ -z "$AGENT_CONFIG_FILE" ]]
     do
-        log-info "Enter the agent properties file: "
+        list-known-agent-configs
+
+        log-info "Enter the agent properties file to update: "
         read -r AGENT_CONFIG_FILE
 
-        local ENV_FILE="$AGENT_CONFIG_FILE"
-        if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
-            log-warn "Agent config file not found, $AGENT_CONFIG_FILE"
-            AGENT_CONFIG_FILE=""
+        if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+            log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+        else
+            AGENT_CONFIG_FILE=$(get-agent-config-file "$AGENT_CONFIG_FILE")
+            if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+                log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+            else
+                AGENT_CONFIG_FILE=""
+            fi
         fi
     done
+
+    log-debug "Contents of $AGENT_CONFIG_FILE:"
+    log-debug "$(cat $AGENT_CONFIG_FILE)"
 
     # if empty then prompt
     while [[ -z "$APPD_AGENT_HOME" ]]
     do
-        log-info "Enter the remote AppDyanmics home/install directory: "
+        log-info "Enter the AppDyanmics home/install directory: "
         read -r APPD_AGENT_HOME
+
+        if [[ ! -z "$APPD_AGENT_HOME" ]] && [[ ! -d "$APPD_AGENT_HOME" ]]; then
+            log-warn "Directory not found: $APPD_AGENT_HOME"
+            APPD_AGENT_HOME=""
+        fi
     done
+}
+
+prompt-for-args-choose-agent-config() {
+    # if empty then prompt
+    while [[ -z "$AGENT_CONFIG_FILE" ]]
+    do
+        list-known-agent-configs
+
+        log-info "Which agent config file?"
+        read -r AGENT_CONFIG_FILE
+
+        if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+            log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+        else
+            AGENT_CONFIG_FILE=$(get-agent-config-file "$AGENT_CONFIG_FILE")
+            if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+                log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+            else
+                AGENT_CONFIG_FILE=""
+            fi
+        fi
+    done
+
+    log-debug "Contents of $AGENT_CONFIG_FILE:"
+    log-debug "$(cat $AGENT_CONFIG_FILE)"
 }
 
 update-agent-properties() {
     local agentHome="$1"
     local agentConfig="$2"
+
+    log-debug "update-agent-properties(): agentHome=$agentHome, agentConfig=$agentConfig"
 
     if [[ $(is-empty "$agentConfig") == "true" ]]; then
         log-info "No agent config file passed in. Keeping existing agent configs"
@@ -468,11 +507,19 @@ update-analytics-agent-property() {
     fi
 }
 
-list-all-remote-hosts-configs() {
-    list-all-files "$REMOTE_HOSTS_CONF_DIR"
+get-everything-after-last-slash() {
+    local path="$1"
+    local result=$(echo "$path" | sed 's:.*/::')
+    echo "$result"
 }
 
-list-all-remote-hosts-configs() {
+drop-properties-extension() {
+    local str="$1"
+    local result=$(echo "$str" | cut -d'.' -f1)
+    echo "$result"
+}
+
+list-all-agent-configs() {
     list-all-files "$AGENT_CONF_DIR"
 }
 
@@ -481,6 +528,28 @@ list-all-files() {
     local result=$(find "$dir" -maxdepth 1 -type f)
 
     echo "$result"
+}
+
+list-known-agent-configs() {
+    local configFiles=$(list-all-agent-configs)
+    configFiles=$(get-everything-after-last-slash "$configFiles")
+    configFiles=$(drop-properties-extension "$configFiles")
+    configFiles=$(echo "$configFiles" | grep -v sample)
+
+    if [[ "$configFiles" ]]; then
+        log-info "\nAvailable agent configuration files:"
+
+        echo -e "$configFiles" | while read line; do
+            echo -e "  - $line"
+        done
+    fi
+}
+
+get-agent-config-file() {
+    local env="$1"
+    local envFile="$LAC_DIR/../conf/agent-configs/$env.properties"
+
+    echo "$envFile"
 }
 
 # Execute the main function and get started

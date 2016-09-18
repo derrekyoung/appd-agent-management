@@ -1,6 +1,7 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utils/local-agent-config.sh "test"
+LAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$LAI_DIR"/utils/local-agent-config.sh "test"
+LAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -ae
 
 ################################################################################
@@ -20,8 +21,8 @@ set -ae
 #
 ################################################################################
 
-# Install directory for the AppDynamics agents. The default is where ever you run this script.
-APPD_AGENT_HOME="./agents"
+# Install directory for the AppDynamics agents
+APPD_AGENT_HOME="$LAI_DIR/agents"
 
 # Flag to toggle debug logging. Values= true|false
 DEBUG_LOGS=true
@@ -35,25 +36,28 @@ DEBUG_LOGS=true
 ARCHIVE=""
 
 # The agent configuration properties file
-AGENT_CONFIG_FILE=""
+# AGENT_CONFIG_FILE=""
 
-# Set to true if this is an agent upgrade
-IS_UPGRADE=false
+# # Set to true if this is an agent upgrade
+# IS_UPGRADE=false
 
 usage() {
-    echo "Usage: $0 [-a=path to agent archive] [-h=AppD home]"
-    echo "Install/upgrade AppDynamics agents."
-    echo "Optional params:"
-    echo "    -a|--archive= Agent archive"
-    echo "    -h|--appdhome= Local AppDynamics home directory"
-    echo "    -c|--agentconfig= (Optional) Agent properties configuration file"
-    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
+    echo -e "Install/upgrade AppDynamics agents on the local system."
+    echo -e "Usage: $0"
+    echo -e "\nOptional params:"
+    echo -e "    -a|--archive= Agent archive"
+    echo -e "    -h|--appdhome= Local AppDynamics home directory"
+    echo -e "    -c|--agentconfig= (Optional) Agent properties configuration file"
+    echo -e "    --help  Print usage"
 }
 
 main() {
-    parse-args "$@"
-    prompt-for-args
-    validate-args
+    lai_parse-args "$@"
+    lai_prompt-for-args
+
+    # Get us back here
+    cd "$LAI_DIR"
+    lai_validate-args
 
     log-info "Installing $ARCHIVE"
 
@@ -106,7 +110,7 @@ main() {
     log-info "FINISHED: Installed $fileAndVersionLowercase into $SYMLINK"
 }
 
-parse-args() {
+lai_parse-args() {
     # Grab arguments in case there are any
     for i in "$@"
     do
@@ -123,6 +127,10 @@ parse-args() {
                 AGENT_CONFIG_FILE="${i#*=}"
                 shift # past argument=value
                 ;;
+            --help*)
+                usage
+                exit 0
+                ;;
             *)
                 log-error "Error parsing argument $1" >&2
                 usage
@@ -132,7 +140,7 @@ parse-args() {
     done
 }
 
-prompt-for-args() {
+lai_prompt-for-args() {
     # if empty then prompt
     while [[ -z "$ARCHIVE" ]]
     do
@@ -140,7 +148,7 @@ prompt-for-args() {
         read -r ARCHIVE
 
         if [[ ! -f "$ARCHIVE" ]]; then
-            log-warn "Archive file not found, $ARCHIVE"
+            log-warn "Archive file not found: $ARCHIVE"
             ARCHIVE=""
         fi
     done
@@ -148,12 +156,43 @@ prompt-for-args() {
     # if empty then prompt
     while [[ -z "$APPD_AGENT_HOME" ]]
     do
-        log-info "Enter the remote AppDynamics home/install directory: "
+        log-info "Enter the AppDynamics home/install directory: "
         read -r APPD_AGENT_HOME
+    done
+
+
+    # if empty then prompt
+    while [[ -z "$AGENT_CONFIG_FILE" ]]
+    do
+        echo -e "Set agent configuration?"
+        echo -e "  1) Install/update with a new agent config file"
+        echo -e "  2) Don't modify agent configs:"
+        echo -e "     - If new install, use blank configs"
+        echo -e "     - If upgrade, keep existing configs"
+        echo -e "  3) Exit"
+      	read -p "" option
+
+		case "$option" in
+			1|create)
+                # Calling this from $LAI_DIR/utils/local-agent-config.sh
+                agent-config-start -t=create
+				;;
+			2|update)
+                AGENT_CONFIG_FILE="silent"
+				;;
+			3|exit)
+                echo ""
+                log-info "Exiting..."
+                exit 0
+				;;
+			*)
+                echo -e " "
+				;;
+		esac
     done
 }
 
-validate-args() {
+lai_validate-args() {
     log-debug "ARCHIVE=$ARCHIVE"
     check-file-exists "$ARCHIVE"
 
@@ -166,8 +205,13 @@ validate-args() {
     fi
 
     log-debug "AGENT_CONFIG_FILE=$AGENT_CONFIG_FILE"
-    if [[ $(is-empty "$AGENT_CONFIG_FILE") == "false" ]]; then
+    if [[ $(is-empty "$AGENT_CONFIG_FILE") == "false" ]] && [[ "$AGENT_CONFIG_FILE" != "silent" ]]; then
         check-file-exists "$AGENT_CONFIG_FILE"
+    fi
+
+    if [[ ${ARCHIVE: -4} != ".zip" ]]; then
+        log-error "Sorry, only zip files supported at this time. Aborting"
+        exit 1
     fi
 }
 
@@ -196,11 +240,11 @@ set-file-and-directory-variables() {
     SYMLINK="$APPD_AGENT_HOME/$fileNameOnly"
     log-debug "SYMLINK=$SYMLINK"
 
-    if [[ -d "$oldAgentInstallDirectory" ]]; then
-        IS_UPGRADE=true
-    else
-        IS_UPGRADE=false
-    fi
+    # if [[ -d "$oldAgentInstallDirectory" ]]; then
+    #     IS_UPGRADE=true
+    # else
+    #     IS_UPGRADE=false
+    # fi
 }
 
 set-agent-version-path-variables() {
