@@ -38,16 +38,17 @@ DESIRED_FORMAT=""
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 usage() {
-    echo "Usage: $0 [-e=email] [-p=password] [-v=version] [-t=type of software] [-o=operating system] [-b=bitness] [-f=format]"
-    echo "Download AppDynamics software."
-    echo "    -e= AppDynamics username"
-    echo "    -p= AppDynamics password"
-    echo "    -v= Version, default to the latest version"
-    echo "    -t= Type of software {$PARAM_DATABASE, $PARAM_JAVA, $PARAM_MACHINE, $PARAM_PHP, $PARAM_DOTNET, $PARAM_APACHE, $PARAM_ANALYTICS, $PARAM_MOBILE, $PARAM_CPLUSPLUS, $PARAM_CONTROLLER, $PARAM_EUM, $PARAM_EVENTS_SERVICE}"
-    echo "    -o= JVM type or OS type {$PARAM_LINUX, $PARAM_WINDOWS, $PARAM_SUN, $PARAM_IBM, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
-    echo "    -b= Bitness {$PARAM_32BIT, $PARAM_64BIT}"
-    echo "    -f= Format {$PARAM_ZIP, $PARAM_RPM}"
-    echo "Pass in zero artuments to be prompted for input."
+    echo -e "Download AppDynamics software including agents and platform components. Pass in no artuments to be prompted for input."
+    echo -e "\nUsage: $0"
+    echo -e "\nOptional arguments:"
+    echo -e "    -e=|--email=  AppDynamics username"
+    echo -e "    -p=|--password=  AppDynamics password"
+    echo -e "    -v=|--version=  Version, default to the latest version"
+    echo -e "    -t=|--type=  Type of software {$PARAM_DATABASE, $PARAM_JAVA, $PARAM_MACHINE, $PARAM_PHP, $PARAM_DOTNET, $PARAM_APACHE, $PARAM_ANALYTICS, $PARAM_MOBILE, $PARAM_CPLUSPLUS, $PARAM_CONTROLLER, $PARAM_EUM, $PARAM_EVENTS_SERVICE}"
+    echo -e "    -o=|--os=  JVM type or OS type {$PARAM_LINUX, $PARAM_WINDOWS, $PARAM_SUN, $PARAM_IBM, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
+    echo -e "    -b=|--bitness=  Bitness {$PARAM_32BIT, $PARAM_64BIT}"
+    echo -e "    -f=|--format=  Format {$PARAM_ZIP, $PARAM_RPM}"
+    echo -e "    -h|--help  Print usage"
 }
 
 main() {
@@ -137,6 +138,10 @@ parse-args() {
             -f=*|--format=*)
                 DESIRED_FORMAT="${i#*=}"
                 shift # past argument=value
+                ;;
+            -h*|--help*)
+                usage
+                exit 0
                 ;;
             *)
                 log-error "Error parsing argument $1" >&2

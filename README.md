@@ -4,6 +4,8 @@ A collection of scripts to handle agent downloads, installs and upgrades.
 
 ## 5-Minute Getting Started
 
+Download these scripts, download the Java and Machine agents and then install the agents.
+
 Prerequisites:
 
 1. **Email** address for your AppDynamics.com account
@@ -166,16 +168,17 @@ http://www.fabfile.org/installing.html
 * Pip: sudo pip install fabric
 
 # Download AppDynamics Software
-This will prompt you for your username, password and the download URL. You can optionally set the values at the top of the script or pass in arguments.
+Download AppDynamics software including agents and platform components. Pass in no arguments to be prompted for input.
 
 Usage: `./download.sh`
 
-Arguments are optional. You will be prompted for values otherwise.
-Optional params:
-* -e= Your AppDynamics username
-* -p= Your AppDynamics password
-* -v= Version, default to the latest version"
-* -t= Type of software {java, database, machine}"
-* -o= JVM type or OS type {sun, ibm, linux, osx}"
-* -b= Bitness {32, 64}"
-* -f= Format {zip, rpm}"
+Optional arguments:
+
+    -e=|--email=  AppDynamics username
+    -p=|--password=  AppDynamics password
+    -v=|--version=  Version, default to the latest version
+    -t=|--type=  Type of software {database, java, machine, php, net, apache, analytics, mobile, cpp, controller, eum, events-service}
+    -o=|--os=  JVM type or OS type {linux, windows, sun, ibm, osx, android, ios}
+    -b=|--bitness=  Bitness {32, 64}
+    -f=|--format=  Format {zip, rpm}
+    -h|--help  Print usage
