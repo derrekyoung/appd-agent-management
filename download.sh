@@ -23,7 +23,7 @@ DEBUG_LOGS=true
 # Do Not Edit Below This Line
 ################################################################################
 
-DOWNLOAD_HOME="./tmp"
+DOWNLOAD_HOME="./archives"
 LATEST_APPD_VERSION="4.2.6.1"
 PASSWORD=""
 URL=""
@@ -75,7 +75,8 @@ main() {
 }
 
 download() {
-    log-info "$EMAIL downloading $URL"
+    log-info "User: $EMAIL"
+    log-info "Downloading: $URL"
 
     if [[ -z "$URL" ]]; then
         log-error "URL is empty. Aborting."
@@ -83,7 +84,7 @@ download() {
     fi
 
     # Get everything after the last slash
-    ARCHIVE_NAME=$(echo "$URL" | sed 's:.*/::')
+    ARCHIVE_NAME=$(get-everything-after-last-slash "$URL")
 
     if [ ! -d "$DOWNLOAD_HOME" ]; then
         mkdir "$DOWNLOAD_HOME"
@@ -952,8 +953,14 @@ replace-url() {
     URL=$(echo "$URL" | sed -e s%$VERSION_TOKEN%$DESIRED_VERSION%g)
 }
 
-validate-parameter() {
-    local param="$1"
+# validate-parameter() {
+#     local param="$1"
+# }
+
+get-everything-after-last-slash() {
+    local path="$1"
+    local result=$(echo "$path" | sed 's:.*/::')
+    echo "$result"
 }
 
 ################################################################################
