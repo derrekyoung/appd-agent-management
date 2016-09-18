@@ -73,7 +73,7 @@ main() {
     echo -e "   https://docs.appdynamics.com/display/PRO42/Instrument+Java+Applications"
     echo -e ""
     echo -e "Machine agent:"
-    echo -e "   1) You should immediately start seeing metrics in your Controller"
+    echo -e "   1) You should immediately see metrics in your Controller"
     echo -e "   https://docs.appdynamics.com/display/PRO42/Install+the+Standalone+Machine+Agent"
     echo -e ""
     echo -e "Thank you and enjoy! \n"
