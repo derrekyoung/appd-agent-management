@@ -39,7 +39,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 usage() {
     echo -e "Download AppDynamics software including agents and platform components. Pass in no artuments to be prompted for input."
-    echo -e "\nUsage: $0"
+    echo -e "Usage: $0"
     echo -e "\nOptional arguments:"
     echo -e "    -e=|--email=  AppDynamics username"
     echo -e "    -p=|--password=  AppDynamics password"
@@ -48,7 +48,7 @@ usage() {
     echo -e "    -o=|--os=  JVM type or OS type {$PARAM_LINUX, $PARAM_WINDOWS, $PARAM_SUN, $PARAM_IBM, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
     echo -e "    -b=|--bitness=  Bitness {$PARAM_32BIT, $PARAM_64BIT}"
     echo -e "    -f=|--format=  Format {$PARAM_ZIP, $PARAM_RPM}"
-    echo -e "    -h|--help  Print usage"
+    echo -e "    --help  Print usage"
 }
 
 main() {
@@ -139,7 +139,7 @@ parse-args() {
                 DESIRED_FORMAT="${i#*=}"
                 shift # past argument=value
                 ;;
-            -h*|--help*)
+            --help*)
                 usage
                 exit 0
                 ;;
