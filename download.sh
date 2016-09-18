@@ -92,9 +92,9 @@ download() {
 
     cd "$DOWNLOAD_HOME"
 
-    # curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
-    # curl -L -O -b cookies.txt "$URL"
-    # rm -f cookies.txt
+    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
+    curl -L -O -b cookies.txt "$URL"
+    rm -f cookies.txt
 
     cd "$dir"
 
