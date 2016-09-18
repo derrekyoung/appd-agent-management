@@ -1,6 +1,7 @@
 #!/bin/bash
+B_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-VERSION="0.9-BETA"
+VERSION="0.10-BETA"
 AUTHORS="Derrek Young, Eli Rodriguez"
 
 
@@ -9,11 +10,11 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 # Do not edit below this line
 ###############################################################################
 
-source ./utils/utilities.sh
+source "$B_DIR"/utils/utilities.sh
 
 # PARENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # TLD=""
-DIST_DIR="./dist"
+DIST_DIR="$B_DIR/dist"
 DISTRIBUTABLE_NAME="appd-agent-management.zip"
 
 declare -a FILES=("README.md" \
