@@ -1,7 +1,7 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utils/utilities.sh
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+RAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$RAI_DIR"/utils/utilities.sh
+source "$RAI_DIR"/utils/local-agent-config.sh "test"
 set -ea
 
 ################################################################################
@@ -33,7 +33,7 @@ AGENT_CONFIG_FILE=""
 
 ################################################################################
 
-SCRIPTS_ZIP_FILE="$DIR/dist/appd-agent-management.zip"
+SCRIPTS_ZIP_FILE="$RAI_DIR/dist/appd-agent-management.zip"
 
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
@@ -50,9 +50,9 @@ usage() {
 }
 
 main() {
-    parse-args "$@"
-    prompt-for-args
-    validate-args
+    rai_parse-args "$@"
+    rai_prompt-for-args
+    rai_validate-args
 
     # Make the logs dir
     mkdir -p logs/
@@ -65,7 +65,7 @@ main() {
     SECONDS=0
     log-info "Started:  $startDate"
 
-    local ENV_FILE=$(get-env-file "$ENV")
+    local ENV_FILE=$(get-remote-hosts-file "$ENV")
 
     # Call Python Fabric to do remote management
     fab --fabfile ./utils/fabfile.py \
@@ -77,7 +77,7 @@ main() {
         | tee logs/"$ENV-remote-install.log"
 
     # Clean up the compiled file
-    rm -f "$DIR"/utils/fabfile.pyc
+    rm -f "$RAI_DIR"/utils/fabfile.pyc
 
     # Finished
     endTime=$(date '+%Y-%m-%d %H:%M:%S')
@@ -85,7 +85,7 @@ main() {
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
 }
 
-parse-args() {
+rai_parse-args() {
     # Grab arguments in case there are any
     for i in "$@"
     do
@@ -115,14 +115,14 @@ parse-args() {
     done
 }
 
-prompt-for-args() {
+rai_prompt-for-args() {
     # if empty then prompt
     while [[ -z "$ENV" ]]
     do
         log-info "Enter the environment config name: "
         read -r ENV
 
-        local ENV_FILE=$(get-env-file "$ENV")
+        local ENV_FILE=$(get-remote-hosts-file "$ENV")
         if [[ ! -f "$ENV_FILE" ]]; then
             log-warn "Environment file not found, $ENV_FILE"
             ENV=""
@@ -149,7 +149,7 @@ prompt-for-args() {
     done
 
     if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
-        log-info "Do you wish to update agent properties? Enter the agent config name or leave blank:"
+        log-info "Do you wish to update remote agent properties? Enter the agent config name or leave blank:"
         read -r AGENT_CONFIG_FILE
 
         if [[ ! -f "$AGENT_CONFIG_FILE" ]]; then
@@ -159,22 +159,15 @@ prompt-for-args() {
     fi
 }
 
-get-env-file() {
+get-remote-hosts-file() {
     local env="$1"
     local envFile="./conf/remote-hosts/$env.json"
 
     echo "$envFile"
 }
 
-get-agent-config-file() {
-    local env="$1"
-    local envFile="./conf/agent-configs/$env.properties"
-
-    echo "$envFile"
-}
-
-validate-args() {
-    local ENV_FILE=$(get-remote-hosts "$ENV")
+rai_validate-args() {
+    local ENV_FILE=$(get-remote-hosts-file "$ENV")
     if [[ ! -f "$ENV_FILE" ]]; then
         log-error "Environment file not found, $ENV_FILE"
         usage
@@ -192,12 +185,6 @@ validate-args() {
         log-error "You must set the remote AppDyanmics home directory"
         exit 1
     fi
-}
-
-get-remote-hosts() {
-    local name="$1"
-    local cfg="./conf/remote-hosts/$name.json"
-    echo "$cfg"
 }
 
 main "$@"
