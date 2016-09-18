@@ -80,7 +80,7 @@ download() {
 
     if [[ -z "$URL" ]]; then
         log-error "URL is empty. Aborting."
-        return
+        exit 1
     fi
 
     # Get everything after the last slash
