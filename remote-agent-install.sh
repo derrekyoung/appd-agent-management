@@ -39,14 +39,14 @@ SCRIPTS_ZIP_FILE="$RAI_DIR/dist/appd-agent-management.zip"
 ARCHIVE=""
 
 usage() {
-    echo "Usage: $0 [-e=environment] [-a=path to agent archive] [-h=AppD home]"
-    echo "Install/upgrade AppDynamics agents."
-    echo "Optional params:"
-    echo "    -e|--environment= Deployment environment config"
-    echo "    -a|--archive= Agent archive"
-    echo "    -h|--appdhome= Remote AppDynamics home directory"
-    echo "    -c|--config= (optional) Agent properties configuration file"
-    echo "Pass in zero artuments to be prompted for input or set the variables at the top of this script to have default variables."
+    echo -e "Install/upgrade AppDynamics agents on remote systems."
+    echo -e "Usage: $0"
+    echo -e "\nOptional params:"
+    echo -e "    -e|--environment= Deployment environment config"
+    echo -e "    -a|--archive= Agent archive"
+    echo -e "    -h|--appdhome= Remote AppDynamics home directory"
+    echo -e "    -c|--config= (optional) Agent properties configuration file"
+    echo -e "    --help  Print usage"
 }
 
 main() {
@@ -105,6 +105,10 @@ rai_parse-args() {
             -c=*|--config=*)
                 AGENT_CONFIG_FILE="${i#*=}"
                 shift # past argument=value
+                ;;
+            --help*)
+                usage
+                exit 0
                 ;;
             *)
                 log-error "Error parsing argument $1" >&2
