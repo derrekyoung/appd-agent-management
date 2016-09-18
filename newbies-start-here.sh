@@ -89,6 +89,7 @@ show-prerequisites() {
     echo -e "  * Your AppDynamics Controller host name"
     echo -e "  * Your AppDynamics Controller account name"
     echo -e "  * Your AppDynamics Controller account access key"
+    echo -e "  * 'curl' command needs to be installed on this host"
     echo -e ""
 
     local msg="Do you want to continue? [yes/no]"
