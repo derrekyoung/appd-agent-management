@@ -1,6 +1,6 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR"/utils/utilities.sh
+DL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DL_DIR"/utils/utilities.sh
 set -ea
 
 ################################################################################
@@ -23,7 +23,7 @@ DEBUG_LOGS=true
 # Do Not Edit Below This Line
 ################################################################################
 
-DOWNLOAD_HOME="./archives"
+DOWNLOAD_HOME="$DL_DIR/archives"
 LATEST_APPD_VERSION="4.2.6.1"
 PASSWORD=""
 URL=""
@@ -45,7 +45,7 @@ usage() {
     echo -e "    -p=|--password=  AppDynamics password"
     echo -e "    -v=|--version=  Version, default to the latest version"
     echo -e "    -t=|--type=  Type of software {$PARAM_DATABASE, $PARAM_JAVA, $PARAM_MACHINE, $PARAM_PHP, $PARAM_DOTNET, $PARAM_APACHE, $PARAM_ANALYTICS, $PARAM_MOBILE, $PARAM_CPLUSPLUS, $PARAM_CONTROLLER, $PARAM_EUM, $PARAM_EVENTS_SERVICE}"
-    echo -e "    -o=|--os=  JVM type or OS type {$PARAM_LINUX, $PARAM_WINDOWS, $PARAM_SUN, $PARAM_IBM, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
+    echo -e "    -o=|--os=  JVM type or OS type {$PARAM_SUN, $PARAM_IBM, $PARAM_LINUX, $PARAM_WINDOWS, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
     echo -e "    -b=|--bitness=  Bitness {$PARAM_32BIT, $PARAM_64BIT}"
     echo -e "    -f=|--format=  Format {$PARAM_ZIP, $PARAM_RPM}"
     echo -e "    --help  Print usage"
@@ -90,7 +90,7 @@ download() {
         mkdir "$DOWNLOAD_HOME"
     fi
 
-    local dir="$DIR"
+    local dir="$DL_DIR"
 
     cd "$DOWNLOAD_HOME"
 
@@ -98,7 +98,7 @@ download() {
     curl -L -O -b cookies.txt "$URL"
     rm -f cookies.txt
 
-    cd "$dir"
+    cd "$DL_DIR"
 
     log-info "Agent downloaded to $DOWNLOAD_HOME/$ARCHIVE_NAME"
 }
