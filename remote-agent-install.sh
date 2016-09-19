@@ -1,7 +1,9 @@
 #!/bin/bash
 RAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$RAI_DIR"/utils/utilities.sh
+check-file-exists "$RAI_DIR/utils/utilities.sh"
 source "$RAI_DIR"/utils/local-agent-config.sh "test"
+check-file-exists "$RAI_DIR/utils/local-agent-config.sh"
 set -ea
 
 ################################################################################
@@ -13,27 +15,30 @@ set -ea
 #     http://www.fabfile.org/installing.html
 #   - Access to local-agent-install.sh in this same directory
 #
-# Version: _VERSION_
-# Author(s): _AUTHORS_
+# Version: __VERSION__
+# Author(s): __AUTHORS__
 #
 ################################################################################
 
 # Flag to toggle debug logging. Values= true|false
 DEBUG_LOGS=true
 
-# Environment deployment config
-ENV=""
-
 # Where to install AppDynamics
 REMOTE_APPD_HOME="/opt/AppDynamics"
+
+
+
+###############################################################################
+# Do not edit below this line
+###############################################################################
+
+SCRIPTS_ZIP_FILE="$RAI_DIR/dist/appd-agent-management.zip"
 
 # An optional configuration file for agent properties (controller-info.xml, analytics-agent.properties
 AGENT_CONFIG_FILE=""
 
-
-################################################################################
-
-SCRIPTS_ZIP_FILE="$RAI_DIR/dist/appd-agent-management.zip"
+# Environment deployment config
+ENV=""
 
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""

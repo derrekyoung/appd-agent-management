@@ -1,5 +1,17 @@
 #!/bin/bash
 B_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$B_DIR"/utils/utilities.sh
+check-file-exists "$B_DIR/utils/utilities.sh"
+set -ea
+
+################################################################################
+#
+# Build the project and create a zip.
+#
+# Version: __VERSION__
+# Author(s): __AUTHORS__
+#
+################################################################################
 
 VERSION="0.10-BETA"
 AUTHORS="Derrek Young, Eli Rodriguez"
@@ -9,8 +21,6 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 ###############################################################################
 # Do not edit below this line
 ###############################################################################
-
-source "$B_DIR"/utils/utilities.sh
 
 # PARENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # TLD=""
@@ -28,8 +38,7 @@ declare -a FILES=("README.md" \
     "utils/fabfile.py" \
     "utils/latest-appdynamics-version.txt" \
     "utils/local-agent-config.sh" \
-    "utils/utilities.sh" \
-    "utils/version.txt")
+    "utils/utilities.sh")
 
 copy-files() {
     for file in "${FILES[@]}"
@@ -44,8 +53,8 @@ replace-build-variables() {
     do
         # echo "$file"
         sed -i -e "s/DEBUG_LOGS=true/DEBUG_LOGS=false/g" "$file"
-        sed -i -e "s/_VERSION_/$VERSION/g" "$file"
-        sed -i -e "s/_AUTHORS_/$AUTHORS/g" "$file"
+        sed -i -e "s/__VERSION__/$VERSION/g" "$file"
+        sed -i -e "s/__AUTHORS__/$AUTHORS/g" "$file"
 
         # Differences between Mac and Linux. Mac doesn't know the '-e'
         if [[ -f "$file-e" ]]; then

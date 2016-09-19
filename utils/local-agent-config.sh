@@ -13,8 +13,8 @@ set -ea
 # Requirements:
 #   - user access to the AppDynamics Home directory, APPD_AGENT_HOME
 #
-# Version: _VERSION_
-# Author(s): _AUTHORS_
+# Version: __VERSION__
+# Author(s): __AUTHORS__
 #
 ################################################################################
 

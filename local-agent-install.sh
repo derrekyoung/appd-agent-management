@@ -1,7 +1,7 @@
 #!/bin/bash
 LAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$LAI_DIR"/utils/local-agent-config.sh "test"
-LAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+check-file-exists "$LAI_DIR/utils/local-agent-config.sh"
 set -ae
 
 ################################################################################
@@ -16,8 +16,8 @@ set -ae
 #   - unzip utility installed
 #   - user access to the AppDynamics Home directory, APPD_AGENT_HOME
 #
-# Version: _VERSION_
-# Author(s): _AUTHORS_
+# Version: __VERSION__
+# Author(s): __AUTHORS__
 #
 ################################################################################
 

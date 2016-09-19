@@ -1,14 +1,15 @@
 #!/bin/bash
 DL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DL_DIR"/utils/utilities.sh
+check-file-exists "$DL_DIR/utils/utilities.sh"
 set -ea
 
 ################################################################################
 #
 # Useful for automating downloads or downloading directly onto a server.
 #
-# Version: _VERSION_
-# Author(s): _AUTHORS_
+# Version: __VERSION__
+# Author(s): __AUTHORS__
 #
 ################################################################################
 
@@ -24,7 +25,7 @@ DEBUG_LOGS=true
 ################################################################################
 
 DOWNLOAD_HOME="$DL_DIR/archives"
-LATEST_APPD_VERSION="4.2.6.1"
+LATEST_APPD_VERSION=""
 PASSWORD=""
 URL=""
 

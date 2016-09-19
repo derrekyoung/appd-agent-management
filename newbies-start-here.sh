@@ -1,8 +1,9 @@
 #!/bin/bash
 SH_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$SH_DIR"/utils/utilities.sh
-SH_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+check-file-exists "$SH_DIR/utils/utilities.sh"
 source "$SH_DIR"/utils/local-agent-config.sh "test"
+check-file-exists "$SH_DIR/utils/local-agent-config.sh"
 set -ea
 
 ###############################################################################

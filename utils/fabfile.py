@@ -12,8 +12,8 @@
 #       Pip: sudo pip install fabric
 #   - Access to local-agent-install.sh in this same directory
 #
-# Version: _VERSION_
-# Author(s): _AUTHORS_
+# Version: __VERSION__
+# Author(s): __AUTHORS__
 #
 ################################################################################
 
