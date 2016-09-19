@@ -79,7 +79,7 @@ def set_env(env_file):
 
 @task
 def check_host():
-    run('echo INFO:  Host is valid. AppDynamics home is '+env.home)
+    run('echo INFO:  Validating '+env.host_string+'. AppDynamics home is '+env.home)
 
 
 @parallel(pool_size=10)
