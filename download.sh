@@ -24,6 +24,10 @@ DEBUG_LOGS=true
 # Do Not Edit Below This Line
 ################################################################################
 
+LOG_DIR="$DL_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+
 DOWNLOAD_HOME="$DL_DIR/archives"
 LATEST_APPD_VERSION=""
 PASSWORD=""
@@ -58,6 +62,13 @@ main() {
         return
     fi
 
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
+    # Start the process
+    local startDate=$(date '+%Y-%m-%d %H:%M:%S')
+    SECONDS=0
+    log-info "Started:  $startDate"
+
     parse-args "$@"
     prompt-for-credentials
 
@@ -72,7 +83,12 @@ main() {
     build-url
 
     replace-url
+
     download
+
+    local endTime=$(date '+%Y-%m-%d %H:%M:%S')
+    local duration="$SECONDS"
+    log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
 }
 
 download() {
@@ -95,7 +111,10 @@ download() {
 
     cd "$DOWNLOAD_HOME"
 
-    curl -c cookies.txt -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
+    curl -c cookies.txt -f -d "username=$EMAIL&password=$PASSWORD" https://login.appdynamics.com/sso/login/
+
+    # TODO: Validate the login worked
+
     curl -L -O -b cookies.txt "$URL"
     rm -f cookies.txt
 

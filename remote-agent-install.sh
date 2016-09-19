@@ -34,6 +34,10 @@ REMOTE_APPD_HOME="/opt/AppDynamics"
 
 SCRIPTS_ZIP_FILE="$RAI_DIR/dist/appd-agent-management.zip"
 
+LOG_DIR="$RAI_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+
 # An optional configuration file for agent properties (controller-info.xml, analytics-agent.properties
 AGENT_CONFIG_FILE=""
 
@@ -55,18 +59,17 @@ usage() {
 }
 
 main() {
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
     rai_parse-args "$@"
     rai_prompt-for-args
     rai_validate-args
-
-    # Make the logs dir
-    mkdir -p logs/
 
     # Build the archive so we can upload it later
     /bin/bash ./build.sh > /dev/null 2>&1
 
     # Start the process
-    startDate=$(date '+%Y-%m-%d %H:%M:%S')
+    local startDate=$(date '+%Y-%m-%d %H:%M:%S')
     SECONDS=0
     log-info "Started:  $startDate"
 
@@ -79,14 +82,14 @@ main() {
         prep:archive="$ARCHIVE",scripts="$SCRIPTS_ZIP_FILE" \
         install:archive="$ARCHIVE",config="$AGENT_CONFIG_FILE" \
         cleanup:archive="$ARCHIVE",config="$AGENT_CONFIG_FILE" \
-        | tee logs/"$ENV-remote-install.log"
+        | tee -a "$LOG_FILE"
 
     # Clean up the compiled file
     rm -f "$RAI_DIR"/utils/fabfile.pyc
 
     # Finished
-    endTime=$(date '+%Y-%m-%d %H:%M:%S')
-    duration="$SECONDS"
+    local endTime=$(date '+%Y-%m-%d %H:%M:%S')
+    local duration="$SECONDS"
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
 }
 

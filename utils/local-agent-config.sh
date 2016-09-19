@@ -1,7 +1,7 @@
 #!/bin/bash
 LAC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$LAC_DIR"/utilities.sh
-LAC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+check-file-exists "$LAC_DIR/utilities.sh"
 set -ea
 
 ################################################################################
@@ -26,6 +26,10 @@ DEBUG_LOGS=true
 ################################################################################
 #   Do Not Edit Below This Line
 ################################################################################
+
+LOG_DIR="$LAC_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
 
 # Install directory for the AppDynamics agents. The default is where ever you run this script.
 APPD_AGENT_HOME=""
@@ -80,6 +84,9 @@ main() {
 
 agent-config-start() {
     lac_parse-args "$@"
+
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
     lac_prompt-for-args
 
     if [[ "$ACTION" == "$ACTION_UPDATE" ]]; then

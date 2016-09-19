@@ -29,6 +29,10 @@ DEBUG_LOGS=true
 # Do not edit below this line
 ###############################################################################
 
+LOG_DIR="$SH_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+
 LATEST_APPD_VERSION=""
 EMAIL=""
 PASSWORD=""
@@ -40,6 +44,8 @@ INSTALL_SCRIPT="$SH_DIR/local-agent-install.sh"
 # AGENT_CONFIG_SCRIPT="$SH_DIR/utils/local-agent-config.sh"
 
 main() {
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
     show-prerequisites
 
     prompt-for-credentials

@@ -22,8 +22,10 @@ AUTHORS="Derrek Young, Eli Rodriguez"
 # Do not edit below this line
 ###############################################################################
 
-# PARENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# TLD=""
+LOG_DIR="$B_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+
 DIST_DIR="$B_DIR/dist"
 DISTRIBUTABLE_NAME="appd-agent-management.zip"
 
@@ -64,6 +66,8 @@ replace-build-variables() {
 }
 
 dist() {
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
     log-info "Building version $VERSION"
 
     # Remove the existing dist dir

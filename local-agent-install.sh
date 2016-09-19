@@ -32,6 +32,10 @@ DEBUG_LOGS=true
 
 ################################################################################
 
+LOG_DIR="$LAI_DIR/logs"
+SCRIPT_NAME=$(basename -- "$0" | cut -d"." -f1)
+LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+
 # The agent archive to install/upgrade. Best to pass this in as an argument
 ARCHIVE=""
 
@@ -52,6 +56,13 @@ usage() {
 }
 
 main() {
+    prepare-logs "$LOG_DIR" "$LOG_FILE"
+
+    # Start the process
+    local startDate=$(date '+%Y-%m-%d %H:%M:%S')
+    SECONDS=0
+    log-info "Started:  $startDate"
+
     lai_parse-args "$@"
     lai_prompt-for-args
 
@@ -107,6 +118,10 @@ main() {
 
     start-agent "$SYMLINK"
 
+    local endTime=$(date '+%Y-%m-%d %H:%M:%S')
+    local duration="$SECONDS"
+    log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
+    
     log-info "FINISHED: Installed $fileAndVersionLowercase into $SYMLINK"
 }
 

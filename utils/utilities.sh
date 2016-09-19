@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ea
 
 ################################################################################
 # String Manipulation
@@ -90,22 +91,33 @@ update-value-in-xml-file() {
 
 ################################################################################
 # Logging
+prepare-logs() {
+    local logDir="$1"
+    local logFile="$2"
+
+    mkdir -p "$logDir"
+
+    if [[ -f "$logFile" ]]; then
+        rm -f "$logFile"
+    fi
+}
+
 log-debug() {
     if [[ $DEBUG_LOGS = true ]]; then
-        echo -e "DEBUG: $1"
+        echo -e "DEBUG: $1" | tee -a "$LOG_FILE"
     fi
 }
 
 log-info() {
-    echo -e "INFO:  $1"
+    echo -e "INFO:  $1" | tee -a "$LOG_FILE"
 }
 
 log-warn() {
-    echo -e "WARN:  $1"
+    echo -e "WARN:  $1" | tee -a "$LOG_FILE"
 }
 
 log-error() {
-    echo -e "ERROR: \n       $1"
+    echo -e "ERROR: \n       $1" | tee -a "$LOG_FILE"
 }
 
 ################################################################################
