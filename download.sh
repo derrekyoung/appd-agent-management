@@ -353,26 +353,26 @@ build-url() {
     if [[ "$DESIRED_TYPE" == "$PARAM_CONTROLLER" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_LINUX" ]] \
     && [[ "$DESIRED_BITNESS" == "$PARAM_32BIT" ]]; then
-        URL="$URL_CPP_AGENT_LINUX_32"
+        URL="$URL_CONTROLLER_LINUX_32"
 
     elif [[ "$DESIRED_TYPE" == "$PARAM_CONTROLLER" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_LINUX" ]] \
     && [[ "$DESIRED_BITNESS" == "$PARAM_64BIT" ]]; then
-        URL="$URL_CPP_AGENT_LINUX_64"
+        URL="$URL_CONTROLLER_LINUX_64"
 
     elif [[ "$DESIRED_TYPE" == "$PARAM_CONTROLLER" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_WINDOWS" ]] \
     && [[ "$DESIRED_BITNESS" == "$PARAM_32BIT" ]]; then
-        URL="$URL_CPP_AGENT_WINDOWS_32"
+        URL="$URL_CONTROLLER_WINDOWS_32"
 
     elif [[ "$DESIRED_TYPE" == "$PARAM_CONTROLLER" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_WINDOWS" ]] \
     && [[ "$DESIRED_BITNESS" == "$PARAM_64BIT" ]]; then
-        URL="$URL_CPP_AGENT_WINDOWS_64"
+        URL="$URL_CONTROLLER_WINDOWS_64"
 
     elif [[ "$DESIRED_TYPE" == "$PARAM_CONTROLLER" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_OSX" ]]; then
-        URL="$URL_CPP_AGENT_WINDOWS_64"
+        URL="$URL_CONTROLLER_WINDOWS_64"
     fi
 
     # Events Service
