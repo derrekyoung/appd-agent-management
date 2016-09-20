@@ -30,7 +30,7 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 # Table of Contents
 
 - [AppDynamics Agent Management](#)
-- 	  [5- Minute Getting Started](#g5-minute-getting-started)
+- 	  [5-Minute Getting Started](#5-minute-getting-started)
 - [Capabilities](#capabilities)
 - [Requirements](#requirements)
 - [Download Latest](#download-latest)
