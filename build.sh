@@ -1,7 +1,5 @@
 #!/bin/bash
 B_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$B_DIR"/utils/utilities.sh
-check-file-exists "$B_DIR/utils/utilities.sh"
 set -ea
 
 ################################################################################
@@ -91,6 +89,37 @@ dist() {
     zip -r "$DISTRIBUTABLE_NAME" *
 
     log-info "Finished $DIST_DIR/$DISTRIBUTABLE_NAME"
+}
+
+################################################################################
+# Logging
+prepare-logs() {
+    local logDir="$1"
+    local logFile="$2"
+
+    mkdir -p "$logDir"
+
+    if [[ -f "$logFile" ]]; then
+        rm -f "$logFile"
+    fi
+}
+
+log-debug() {
+    if [[ $DEBUG_LOGS = true ]]; then
+        echo -e "DEBUG: $1" | tee -a "$LOG_FILE"
+    fi
+}
+
+log-info() {
+    echo -e "INFO:  $1" | tee -a "$LOG_FILE"
+}
+
+log-warn() {
+    echo -e "WARN:  $1" | tee -a "$LOG_FILE"
+}
+
+log-error() {
+    echo -e "ERROR: \n       $1" | tee -a "$LOG_FILE"
 }
 
 dist

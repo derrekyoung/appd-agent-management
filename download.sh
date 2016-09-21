@@ -1,7 +1,5 @@
 #!/bin/bash
 DL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DL_DIR"/utils/utilities.sh
-check-file-exists "$DL_DIR/utils/utilities.sh"
 set -ea
 
 ################################################################################
@@ -946,7 +944,6 @@ set-latest-appd-version() {
 
     log-info "Checking for the latest version of AppDynamics"
 
-    set +e
     curl -LOks --connect-timeout 5 $url
     if [[ 0 -eq $? ]]; then
         version=$(cat "$fileName")
@@ -955,11 +952,10 @@ set-latest-appd-version() {
 
         rm -f "$fileName"
     fi
-    set -e
 
     if [[ "$version" != 4.* ]]; then
         version=$(cat ./utils/"$fileName")
-        log-debug "Got version from file: $version"
+        log-debug "Got version from utils/$fileName: $version"
     fi
 
     LATEST_APPD_VERSION="$version"
@@ -973,14 +969,41 @@ replace-url() {
     URL=$(echo "$URL" | sed -e s%$VERSION_TOKEN%$DESIRED_VERSION%g)
 }
 
-# validate-parameter() {
-#     local param="$1"
-# }
-
 get-everything-after-last-slash() {
     local path="$1"
     local result=$(echo "$path" | sed 's:.*/::')
     echo "$result"
+}
+
+################################################################################
+# Logging
+prepare-logs() {
+    local logDir="$1"
+    local logFile="$2"
+
+    mkdir -p "$logDir"
+
+    if [[ -f "$logFile" ]]; then
+        rm -f "$logFile"
+    fi
+}
+
+log-debug() {
+    if [[ $DEBUG_LOGS = true ]]; then
+        echo -e "DEBUG: $1" | tee -a "$LOG_FILE"
+    fi
+}
+
+log-info() {
+    echo -e "INFO:  $1" | tee -a "$LOG_FILE"
+}
+
+log-warn() {
+    echo -e "WARN:  $1" | tee -a "$LOG_FILE"
+}
+
+log-error() {
+    echo -e "ERROR: \n       $1" | tee -a "$LOG_FILE"
 }
 
 ################################################################################
@@ -1012,11 +1035,6 @@ PARAM_64BIT="64"
 
 PARAM_ZIP="zip"
 PARAM_RPM="rpm"
-
-# declare -a TYPE_LIST ("$PARAM_DATABASE" "$PARAM_JAVA" "$PARAM_MACHINE" "$PARAM_PHP" "$PARAM_DOTNET" "$PARAM_APACHE" "$PARAM_ANALYTICS" "$PARAM_MOBILE" "$PARAM_CPLUSPLUS" "$PARAM_CONTROLLER" "$PARAM_EUM" "$PARAM_EVENTS_SERVICE")
-# declare -a OS_LIST ("$PARAM_IBM" "$PARAM_SUN" "$PARAM_LINUX" "$PARAM_WINDOWS" "$PARAM_OSX" "$PARAM_IOS" "$PARAM_ANDROID" "$PARAM_UNIVERSAL")
-# declare -a BITNESS_LIST ("$PARAM_32BIT" "$PARAM_64BIT")
-# declare -a FORMAT_LIST ("$PARAM_ZIP" "$PARAM_RPM")
 
 ARCHIVE_NAME=""
 
