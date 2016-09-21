@@ -97,7 +97,6 @@ download() {
 
     log-info "Downloading Pip dependencies"
     pip install --download ./"$PIP_CACHE" wheel > /dev/null 2>&1
-    pip install --download ./"$PIP_CACHE" wheel > /dev/null 2>&1
     pip install --download ./"$PIP_CACHE" setuptools > /dev/null 2>&1
     pip install --download ./"$PIP_CACHE" pip > /dev/null 2>&1
     pip install --download ./"$PIP_CACHE" fabric > /dev/null 2>&1
