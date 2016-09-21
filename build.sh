@@ -38,6 +38,7 @@ declare -a FILES=("README.md" \
     "utils/fabfile.py" \
     "utils/latest-appdynamics-version.txt" \
     "utils/local-agent-config.sh" \
+    "utils/offline-fabric.sh" \
     "utils/utilities.sh")
 
 copy-files() {
