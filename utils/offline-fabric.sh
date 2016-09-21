@@ -4,7 +4,7 @@ set -ea
 
 ################################################################################
 #
-#
+# 2 part install of Fabric for offline/closed networks
 #
 # Version: __VERSION__
 # Author(s): __AUTHORS__
