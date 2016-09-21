@@ -1,12 +1,16 @@
 
 *.pyc
+*.tgz
 .DS_Store
+notes.txt
 
 agents/
 archives/
 dist/
 logs/
 tmp/
+utils/pip-cache/
+utils/services/
 
 conf/agent-configs/*.properties
 !conf/agent-configs/sample.properties
