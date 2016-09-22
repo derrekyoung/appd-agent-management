@@ -4,7 +4,7 @@ set -ea
 
 ################################################################################
 #
-# 2 part install of Fabric for offline/closed networks
+# 2 part install of Pip packages for offline/closed networks
 #
 # Version: __VERSION__
 # Author(s): __AUTHORS__
@@ -18,7 +18,7 @@ DEBUG_LOGS=true
 # Do Not Edit Below This Line
 ################################################################################
 
-PACKAGE_NAME="fabric"
+PACKAGE_NAME=""
 PIP_CACHE="pip-cache"
 ARCHIVE_NAME="$PACKAGE_NAME-$PIP_CACHE.tgz"
 MODE=""
@@ -30,10 +30,11 @@ usage() {
     echo -e "This is a 2 part process:"
     echo -e "   1) Download the dependencies from a server that has internet access."
     echo -e "   2) Install $PACKAGE_NAME with dependencies\n"
-    echo -e "Usage: $0 {download,install}"
+    echo -e "Usage: $0 {download,install} {pip package name}"
     echo -e "\nArguments:"
     echo -e "    download   Download Fabric and dependencies"
     echo -e "    install    Offline install fabric with dependencies"
+    echo -e "    {pip package} The name of the Pip package, e.g. fabric"
     echo -e "    --help  Print usage"
 }
 
@@ -51,32 +52,27 @@ main() {
 }
 
 parse-args() {
-    for i in "$@"
-    do
-        echo "i=$i"
+    local tmpMode="$1"
+    local tmpPackage="$2"
 
-        case $i in
-            install|INSTALL)
-                MODE=$MODE_INSTALL
-                # shift # past argument=value
-                break
-                ;;
-            download|DOWNLOAD)
-                MODE=$MODE_DOWNLOAD
-                # shift # past argument=value
-                break
-                ;;
-            --help)
-                usage
-                exit 0
-                ;;
-            *)
-                log-error "Error parsing argument $1" >&2
-                usage
-                exit 1
-            ;;
-        esac
-    done
+    if [[ "$tmpMode" == "install" ]]; then
+        MODE="$MODE_INSTALL"
+    elif [[ "$tmpMode" == "download" ]]; then
+        MODE="$MODE_DOWNLOAD"
+    else
+        log-error "Error parsing argument $tmpMode" >&2
+        usage
+        exit 1
+    fi
+
+    if [[ -z "$tmpPackage" ]]; then
+        log-error "Required: You must pass in a Pip package name" >&2
+        usage
+        exit 1
+    else
+        PACKAGE_NAME="$tmpPackage"
+        ARCHIVE_NAME="$PACKAGE_NAME-$PIP_CACHE.tgz"
+    fi
 }
 
 # Download and package dependencies
@@ -89,7 +85,7 @@ download() {
     fi
 
     mkdir -p "$PIP_CACHE"
-    cp "$DIR"/fabric-offline.sh "$PIP_CACHE"
+    cp "$DIR"/$0 "$PIP_CACHE"
 
     cd "$PIP_CACHE"
     curl -O https://bootstrap.pypa.io/get-pip.py
@@ -109,7 +105,7 @@ download() {
     log-info "SUCCESS: $PACKAGE_NAME depencies downloaded and compressed into $ARCHIVE_NAME \n"
     log-info "Next steps:"
     log-info "  1) Transfer $ARCHIVE_NAME and this script to the destination server."
-    log-info "  2) Execute ./fabric-offlines.sh install \n\n"
+    log-info "  2) Execute $0 install $PACKAGE_NAME \n\n"
 }
 
 install() {
