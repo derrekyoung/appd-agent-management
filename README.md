@@ -8,14 +8,9 @@ Download these scripts, download the Java and Machine agents and then install th
 
 Prerequisites:
 
-1. **Email** address for your AppDynamics.com account
-1. **Password** for your AppDynamics.com account
-1. Your AppDynamics Controller **host name**
-1. Your AppDynamics Controller **account name**
-1. Your AppDynamics Controller **account access key**
+1. **Email** and **Password** for your AppDynamics.com account
+1. Your AppDynamics Controller **host name**, **account name**, and **account access key**
 1. "**curl**" command needs to be installed on your host
-
-
 
 Open a terminal and execute this command. Follow the on-screen prompts.
 ```BASH
@@ -30,10 +25,11 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 # Table of Contents
 
 - [AppDynamics Agent Management](#)
-- 	  [5-Minute Getting Started](#5-minute-getting-started)
-- [Capabilities](#capabilities)
-- [Requirements](#requirements)
-- [Download Latest](#download-latest)
+	- [5-Minute Getting Started](#5-minute-getting-started)
+- [About AppDynamics Agent Management](#)
+	- [Capabilities](#capabilities)
+	- [Requirements](#requirements)
+	- [Download Latest](#download-latest)
 - [Install/Upgrade Agent Locally](#installupgrade-agent-locally)
 	- [Arguments and Settings](#arguments-and-settings)
 	- [Agent Configuration Properties](#agent-configuration-properties)
@@ -43,13 +39,14 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 	- [Install Python Fabric](#install-python-fabric)
 - [Download AppDynamics Software](#download-appdynamics-software)
 
-# Requirements
+# About AppDynamics Agent Management
+## Requirements
 * Supported on Linux only. No Windows support
 * Python 2.7+ on the central distribution server
 * Python Fabric on the central distribution server
 * Unzip utility available on the destination servers
 
-# Capabilities
+## Capabilities
 * Install/upgrade the **Java** Agent
 * Install/upgrade the **Machine** Agent
     * Sync extensions after upgrade
