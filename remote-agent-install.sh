@@ -53,7 +53,6 @@ usage() {
     echo -e "\nOptional params:"
     echo -e "    -e|--environment= Deployment environment config"
     echo -e "    -a|--archive= Agent archive"
-    echo -e "    -h|--appdhome= Remote AppDynamics home directory"
     echo -e "    -c|--config= (optional) Agent properties configuration file"
     echo -e "    --help  Print usage"
 }
@@ -104,10 +103,6 @@ rai_parse-args() {
                 ;;
             -a=*|--archive=*)
                 ARCHIVE="${i#*=}"
-                shift # past argument=value
-                ;;
-            -h=*|--appdhome=*)
-                REMOTE_APPD_HOME="${i#*=}"
                 shift # past argument=value
                 ;;
             -c=*|--config=*)
