@@ -26,7 +26,6 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 
 - [AppDynamics Agent Management](#appdynamics-agent-management)
 	- [5-Minute Getting Started](#5-minute-getting-started)
-- [Table of Contents](#table-of-contents)
 - [About AppDynamics Agent Management](#about-appdynamics-agent-management)
 	- [Requirements](#requirements)
 	- [Capabilities](#capabilities)
