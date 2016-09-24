@@ -82,7 +82,7 @@ Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.7.0.zip`
 	* For example, installing `AppServerAgent-4.2.7.0.zip` will result in a version directory `APPD_HOME/agents/appserveragent-4.2.7.0/` and a symlink named `APPD_HOME/agents/appserveragent` pointing to the version directory. (This symlink will be updated for the latest agent that you install of a given type.
 1. Manually instrument your Java application server and include the javaagent config like so `-javaagent:APPD_HOME/agents/appserveragent/javaagent.jar`
 
-## Arguments and Settings
+## Local Arguments and Settings
 1. Arguments are optional. You will be prompted for values otherwise. Optional command line arguments:
     * -a|--archive= Agent archive
     * -h|--appdhome= Remote AppDynamics home directory
@@ -133,7 +133,7 @@ Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynam
 5. Execute `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip` and enter the name of your remote hosts and agent config file. (Only enter the names, without the extensions.)
 6. If using password authentication, you'll be prompted to enter each unique password. Passwords are NOT saved to disk.
 
-## Arguments and Settings
+## Remote Arguments and Settings
 Arguments are optional. You will be prompted for values otherwise.
 
 1. Optional command line arguments:
