@@ -32,11 +32,11 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 	- [Download Latest](#download-latest)
 - [Install/Upgrade Local Agent](#installupgrade-local-agent)
 	- [Getting Started - Local Install](#getting-started-local-install)
-	- [Arguments and Settings](#arguments-and-settings)
+	- [Local Arguments and Settings](#local-arguments-and-settings)
 	- [Agent Configuration Properties](#agent-configuration-properties)
 - [Install/Upgrade Agent on Remote Server(s)](#installupgrade-agent-on-remote-servers)
 	- [Getting Started - Remote Install](#getting-started-remote-install)
-	- [Arguments and Settings](#arguments-and-settings)
+	- [Remote Arguments and Settings](#remote-arguments-and-settings)
 	- [Remote Environment Config](#remote-environment-config)
 	- [Install Python Fabric](#install-python-fabric)
 - [Download AppDynamics Software](#download-appdynamics-software)
@@ -72,7 +72,7 @@ Install a brand new agent or upgrade a new agent in place. Upgrades will sync ex
 
 Usage: `./local-agent-install.sh -a=AppServerAgent-4.2.7.0.zip`
 
-## Getting Started - Local Install
+## Getting Started Local Install
 1. [Download the latest release](https://github.com/derrekyoung/appd-agent-management/releases/latest) of this toolkit and unzip it to your `APPD_HOME` directory.
 1. Download the agent from the [download site](https://download.appdynamics.com) or by using `download.sh`.
 1. (Optional) Manually create an agent config file under `HOME/conf/agent-configs/.
@@ -125,7 +125,7 @@ Test locally before deploying remotely.
 
 Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynamics/ -e=Production`
 
-## Getting Started - Remote Install
+## Getting Started Remote Install
 1. [Download the latest release](https://github.com/derrekyoung/appd-agent-management/releases/latest) of this toolkit and unzip it to your `APPD_HOME` directory.
 2. Learn how to do a local install by reading the docs above.
 3. Create a remote hosts JSON file underneath `APPD_HOME/conf/remote-hosts/`. Folllow the sample file, but see below for additional details.
