@@ -11,7 +11,7 @@ set -ea
 #
 ################################################################################
 
-VERSION="0.10-BETA"
+VERSION="1.0-ALPHA"
 AUTHORS="Derrek Young, Eli Rodriguez"
 
 
