@@ -115,6 +115,8 @@ http.event.accessKey=1234-asdf-1234-asdf-1234-asdf
 ```
 
 # Install/Upgrade Agent on Remote Server(s)
+![remote agent install architecture](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/docs/remote-agent-install-architeture.png)
+
 Operates on remote systems. Requires you to create and define a configuration environment. The environment config must be in a JSON file and named in the format of  `APPD_HOME/conf/remote-hosts/NAME_HERE.json`.
 
 For example, the Production environment might be defined in `production.json`. You'd then trigger this config in `remote-agent-install.sh` by passing in the `-e=production` argument or entering `production` in the interactive shell. See `sample.json` for
