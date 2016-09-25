@@ -12,7 +12,7 @@ Prerequisites:
 1. Your AppDynamics Controller **host name**, **account name**, and **account access key**
 1. "**curl**" command needs to be installed on your host
 
-Open a terminal and execute this command. Follow the on-screen prompts.
+Open a terminal, copy and paste this multi-line command, and press enter. Follow the on-screen prompts, and you'll soon have a Java and Machine agent running on your local system.
 ```BASH
 curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download/latest/appd-agent-management.zip \
 && unzip appd-agent-management.zip -d AppDynamics \
