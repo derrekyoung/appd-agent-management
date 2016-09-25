@@ -42,6 +42,8 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 - [Download AppDynamics Software](#download-appdynamics-software)
 
 # About AppDynamics Agent Management
+![remote agent install architecture](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/docs/remote-agent-install-architeture.png)
+
 ## Requirements
 * Supported on Linux & OS X only. No Windows support
 * Python 2.7 on the central distribution server
