@@ -130,8 +130,8 @@ Usage: `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip -h=/opt/AppDynam
 ## Getting Started Remote Install
 1. [Download the latest release](https://github.com/derrekyoung/appd-agent-management/releases/latest) of this toolkit and unzip it to your `APPD_HOME` directory.
 2. Learn how to do a local install by reading the docs above.
-3. Create a remote hosts JSON file underneath `APPD_HOME/conf/remote-hosts/`. Folllow the sample file, but see below for additional details.
-4. Create an agent config file as described above. Place this file under `APPD_HOME/conf/agent-configs/`.
+3. Create an agent config file, as described above. Place this file under `APPD_HOME/conf/agent-configs/`.
+4. Create a remote hosts JSON file underneath `APPD_HOME/conf/remote-hosts/`. Folllow the sample file, but see below for additional details.
 5. Execute `./remote-agent-install.sh -a=AppServerAgent-4.2.6.0.zip` and enter the name of your remote hosts and agent config file. (Only enter the names, without the extensions.)
 6. If using password authentication, you'll be prompted to enter each unique password. Passwords are NOT saved to disk.
 
