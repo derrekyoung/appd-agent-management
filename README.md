@@ -46,9 +46,9 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 
 ## Requirements
 * Supported on Linux & OS X only. No Windows support
-* Python 2.7 on the central distribution server
-* Python Fabric on the central distribution server
-* Unzip utility available on the destination servers
+* Local & Remote installs: Unzip utility available on the destination servers
+* Remote installs: Python 2.7 on the central distribution server
+* Remote installs: Python Fabric on the central distribution server
 
 ## Capabilities
 * Install/upgrade the **Java** Agent
