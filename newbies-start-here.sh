@@ -222,11 +222,6 @@ install-database-agent() {
 }
 
 
-# Print instructions and links
-# Instructions on how to instrument Java, -javaagent:
-# Machine agent
-# Set up DB agent, link to docs
-
 get-operating-system() {
     local os=""
     if [ "$(uname)" == "Darwin" ]; then
@@ -251,7 +246,6 @@ set-latest-appd-version() {
 
     log-info "Checking for the latest version of AppDynamics"
 
-    set +e
     curl -LOks --connect-timeout 5 $url
     if [[ 0 -eq $? ]]; then
         version=$(cat "$fileName")
@@ -260,7 +254,6 @@ set-latest-appd-version() {
 
         rm -f "$fileName"
     fi
-    set -e
 
     if [[ "$version" != 4.* ]]; then
         version=$(cat ./utils/"$fileName")
