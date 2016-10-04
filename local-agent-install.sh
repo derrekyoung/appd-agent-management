@@ -25,7 +25,7 @@ set -ae
 APPD_AGENT_HOME="$LAI_DIR/agents"
 
 # Flag to toggle debug logging. Values= true|false
-DEBUG_LOGS=false
+DEBUG_LOGS=true
 
 
 
@@ -121,7 +121,7 @@ main() {
     local endTime=$(date '+%Y-%m-%d %H:%M:%S')
     local duration="$SECONDS"
     log-info "Finished: $endTime. Time elsapsed: $(($duration / 60)) min, $(($duration % 60)) sec"
-    
+
     log-info "FINISHED: Installed $fileAndVersionLowercase into $SYMLINK"
 }
 

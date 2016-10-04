@@ -16,7 +16,7 @@ set -ea
 EMAIL=""
 
 # Flag to toggle debug logging. Values= true|false
-DEBUG_LOGS=false
+DEBUG_LOGS=true
 
 ################################################################################
 # Do Not Edit Below This Line
