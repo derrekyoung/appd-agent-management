@@ -25,7 +25,7 @@ set -ae
 APPD_AGENT_HOME="$LAI_DIR/agents"
 
 # Flag to toggle debug logging. Values= true|false
-DEBUG_LOGS=true
+DEBUG_LOGS=false
 
 
 
@@ -483,7 +483,7 @@ start-dbagent() {
 stop-dbagent() {
     local process="db-agent.jar"
 
-    local running=$(ps -ef | grep "$process" | grep -v grep)
+    local running=$(ps -ef | grep "$process" | grep -v grep| awk '{print $2}')
     if [[ -z "$running" ]]; then
         log-debug "$process is NOT running"
         return
@@ -492,7 +492,7 @@ stop-dbagent() {
     log-info "Stopping the Database agent"
 
     # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
-    kill -9 `$running | awk '{print $2}'` > /dev/null 2>&1
+    kill -9 $running > /dev/null 2>&1
 }
 
 start-machineagent() {
@@ -520,7 +520,11 @@ start-machineagent() {
 stop-machineagent() {
     local process="machineagent.jar"
 
-    local running=$(ps -ef | grep "$process" | grep -v grep)
+	# NOTE: This will kill all machine agents on the system, might not want to do that? Check for exact match with version being installed?
+	#       This will only work if the path to the machineagent.jar is fully qualified...and that will only happen if the startup script does this
+	#       The fix will be to update process="$1/mach...." and pass "$agentHome" to the stop-machineagent line.
+	#        This also applies to dbagent stop section.
+    local running=$(ps -ef | grep "$process" | grep -v grep | awk '{print $2}')
     if [[ -z "$running" ]]; then
         log-debug "$process is NOT running"
         return
@@ -528,8 +532,10 @@ stop-machineagent() {
 
     log-info "Stopping the Machine agent"
 
+	# TODO: We need to use just a kill without -9 to let the machine agent shutdown any extensions it might be running.  For example, HardwareMonitor scripts.
+	#       We can try a regular kill and check if it's still running after a set amount of seconds, then do a kill -9
     # Grab all processes. Grep for db-agent. Remove the grep process. Get the PID. Then do a kill on all that.
-    kill -9 `$running | awk '{print $2}'` > /dev/null 2>&1
+    kill -9 $running > /dev/null 2>&1
 }
 
 # Execute the main function and get started
