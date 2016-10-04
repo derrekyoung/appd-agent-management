@@ -16,7 +16,7 @@ set -ea
 EMAIL=""
 
 # Flag to toggle debug logging. Values= true|false
-DEBUG_LOGS=true
+DEBUG_LOGS=false
 
 ################################################################################
 # Do Not Edit Below This Line
@@ -114,7 +114,15 @@ download() {
     # TODO: Validate the login worked
 
     curl -L -O -b cookies.txt "$URL"
+    # TODO: error check successful download
     rm -f cookies.txt
+
+	# Change permissions if the download is a shell script.
+    if [ "${ARCHIVE_NAME##*.}" == "sh" ]; then
+		log-info "Changing permissions for $ARCHIVE_NAME ..."
+		echo chmod 755 $ARCHIVE_NAME
+		chmod 755 $ARCHIVE_NAME
+    fi
 
     cd "$DL_DIR"
 
@@ -446,11 +454,12 @@ prompt-for-type() {
         echo "   5) PHP agent"
     	echo "   6) Analytics agent"
     	echo "   7) Mobile agent"
-    	echo "   8) C++ agent"
+    	echo "   8) Apache Web agent"
+    	echo "   9) C++ agent"
         echo "Platform:"
-    	echo "   9) Controller"
-    	echo "   10) EUM"
-    	echo "   11) Events Service"
+    	echo "   10) Controller"
+    	echo "   11) EUM"
+    	echo "   12) Events Service"
 
       	read -p "" option
 
@@ -476,16 +485,19 @@ prompt-for-type() {
 			7|mobile)
                 DESIRED_TYPE="$PARAM_MOBILE"
 				;;
-			8|cpp|c++|cplusplus)
+			8|apache|webagent)
+                DESIRED_TYPE="$PARAM_APACHE"
+				;;
+			9|cpp|c++|cplusplus)
                 DESIRED_TYPE="$PARAM_CPLUSPLUS"
 				;;
-			9|controller)
+			10|controller)
                 DESIRED_TYPE="$PARAM_CONTROLLER"
 				;;
-			10|eum)
+			11|eum)
                 DESIRED_TYPE="$PARAM_EUM"
 				;;
-			11|events|eventsservice)
+			12|events|eventsservice)
                 DESIRED_TYPE="$PARAM_EVENTS_SERVICE"
 				;;
 			*)
@@ -971,7 +983,8 @@ replace-url() {
 
 get-everything-after-last-slash() {
     local path="$1"
-    local result=$(echo "$path" | sed 's:.*/::')
+    #local result=$(echo "$path" | sed 's:.*/::')
+    local result=${path##*/}
     echo "$result"
 }
 
