@@ -126,7 +126,7 @@ download() {
 
     cd "$DL_DIR"
 
-    log-info "Agent downloaded to $DOWNLOAD_HOME/$ARCHIVE_NAME"
+    log-info "\nAgent downloaded to $DOWNLOAD_HOME/$ARCHIVE_NAME\n"
 }
 
 parse-args() {
