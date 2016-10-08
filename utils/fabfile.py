@@ -43,9 +43,10 @@ env.user = 'appd' # Default, implicit user
 # env.key_filename = ['./my-key1.pem','./my-key2.pem'] # List of SSH keys to try
 
 
-REMOTE_APPD_HOME = '/opt/AppDynamics'
-agent_install_script_path = 'local-agent-install.sh'
-agent_config_script_path = 'utils/local-agent-config.sh'
+remote_appd_home = '/opt/AppDynamics'
+agents_subdirectory = remote_appd_home+'/agents'
+unzip_dir='management'
+agent_install_script_path = unzip_dir+'/local-agent-install.sh'
 
 
 ################################################################################
@@ -60,7 +61,7 @@ def set_env(env_file):
         if env_data.get('appd-home'):
             env.home = env_data.get('appd-home')
         else:
-            env.home = REMOTE_APPD_HOME
+            env.home = remote_appd_home
 
         if env_data.get('user'):
             env.user = env_data.get('user')
@@ -105,10 +106,10 @@ def prep(archive, scripts):
     scripts = ntpath.basename(scripts)
 
     with cd(env.home):
-        run('unzip -q -o '+scripts)
-        run('chmod u+x local-agent-install.sh')
-        # Delete the archive
-        run('rm -f '+scripts)
+        run('rm -rf '+unzip_dir) # Delete existing scripts
+        run('unzip -q -o '+scripts + ' -d '+unzip_dir)
+        run('chmod u+x '+agent_install_script_path)
+        run('rm -f '+scripts) # Delete the archive
 
 @task
 def install(archive, config):
@@ -122,7 +123,11 @@ def install(archive, config):
     archive = ntpath.basename(archive)
 
     with cd(env.home):
-        run('./'+agent_install_script_path+' -a='+archive+' -c='+config+' && sleep 0.5', pty=False)
+        run('./'+agent_install_script_path
+            +' -a='+env.home+'/'+archive
+            +' -c='+env.home+'/'+config
+            +' -h='+agents_subdirectory
+            +' && sleep 0.5', pty=False)
 
 @parallel(pool_size=10)
 @task
@@ -134,19 +139,6 @@ def cleanup(archive, config):
         # Delete the archive
         run('rm -f '+archive)
         run('rm -f '+config)
-
-
-################################################################################
-# Service tasks
-def install_service(archive, appd_home_dir):
-    # Upload the install and service scripts
-
-    # Chmod scripts
-
-    # Install service
-
-    # Start service
-    sudo('service '+serviceName+' start')
 
 
 
