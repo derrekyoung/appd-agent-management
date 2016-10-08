@@ -1,9 +1,6 @@
 #!/bin/bash
 RAI_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$RAI_DIR"/utils/utilities.sh
-check-file-exists "$RAI_DIR/utils/utilities.sh"
-source "$RAI_DIR"/utils/local-agent-config.sh "test"
-check-file-exists "$RAI_DIR/utils/local-agent-config.sh"
+source "$RAI_DIR"/local-agent-install.sh "silent"
 set -ea
 
 ################################################################################
@@ -106,7 +103,13 @@ rai_parse-args() {
                 shift # past argument=value
                 ;;
             -c=*|--config=*)
-                AGENT_CONFIG_FILE="${i#*=}"
+                local tmp="${i#*=}"
+                AGENT_CONFIG_FILE=$(get-agent-config-file "$tmp")
+                if [[ -f "$AGENT_CONFIG_FILE" ]]; then
+                    log-debug "Agent config file='$AGENT_CONFIG_FILE'"
+                else
+                    AGENT_CONFIG_FILE=""
+                fi
                 shift # past argument=value
                 ;;
             --help*)
@@ -203,7 +206,7 @@ list-all-remote-hosts-configs() {
 
 get-remote-hosts-file() {
     local env="$1"
-    local envFile="./conf/remote-hosts/$env.json"
+    local envFile="$RAI_DIR/conf/remote-hosts/$env.json"
 
     echo "$envFile"
 }
@@ -227,6 +230,37 @@ rai_validate-args() {
         log-error "You must set the remote AppDyanmics home directory"
         exit 1
     fi
+}
+
+################################################################################
+# Logging
+prepare-logs() {
+    local logDir="$1"
+    local logFile="$2"
+
+    mkdir -p "$logDir"
+
+    if [[ -f "$logFile" ]]; then
+        rm -f "$logFile"
+    fi
+}
+
+log-debug() {
+    if [[ $DEBUG_LOGS = true ]]; then
+        echo -e "DEBUG: $1" | tee -a "$LOG_FILE"
+    fi
+}
+
+log-info() {
+    echo -e "INFO:  $1" | tee -a "$LOG_FILE"
+}
+
+log-warn() {
+    echo -e "WARN:  $1" | tee -a "$LOG_FILE"
+}
+
+log-error() {
+    echo -e "ERROR: \n       $1" | tee -a "$LOG_FILE"
 }
 
 main "$@"

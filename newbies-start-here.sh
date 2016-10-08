@@ -1,9 +1,6 @@
 #!/bin/bash
 SH_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$SH_DIR"/utils/utilities.sh
-check-file-exists "$SH_DIR/utils/utilities.sh"
-source "$SH_DIR"/utils/local-agent-config.sh "test"
-check-file-exists "$SH_DIR/utils/local-agent-config.sh"
+source "$SH_DIR"/local-agent-install.sh "silent"
 set -ea
 
 ###############################################################################
@@ -49,7 +46,8 @@ main() {
     show-prerequisites
 
     prompt-for-credentials
-    agent-config-start -t="create"
+    ACTION="$ACTION_CREATE"
+    agent-config-start
     cd "$SH_DIR"
 
     set-latest-appd-version
@@ -150,21 +148,6 @@ prompt-for-credentials() {
     done
 }
 
-# # Download the script suite
-# download-agent-management-suite() {
-#     local archive="appd-agent-management.zip"
-#     local url="https://github.com/derrekyoung/appd-agent-management/releases/download/latest/$archive"
-#
-#     log-info "Downloading the scripts from $url"
-#
-#     curl -LOk $url
-#     unzip "$archive"
-#     chmod u+x *.sh
-#
-#     log-info "Cleaning up $archive"
-#     rm -f "$archive"
-# }
-
 
 # Download the Java agent
 download-java-agent() {
@@ -263,6 +246,37 @@ set-latest-appd-version() {
     LATEST_APPD_VERSION="$version"
 
     log-info "Latest known version of AppDynamics: $version"
+}
+
+################################################################################
+# Logging
+prepare-logs() {
+    local logDir="$1"
+    local logFile="$2"
+
+    mkdir -p "$logDir"
+
+    if [[ -f "$logFile" ]]; then
+        rm -f "$logFile"
+    fi
+}
+
+log-debug() {
+    if [[ $DEBUG_LOGS = true ]]; then
+        echo -e "DEBUG: $1" | tee -a "$LOG_FILE"
+    fi
+}
+
+log-info() {
+    echo -e "INFO:  $1" | tee -a "$LOG_FILE"
+}
+
+log-warn() {
+    echo -e "WARN:  $1" | tee -a "$LOG_FILE"
+}
+
+log-error() {
+    echo -e "ERROR: \n       $1" | tee -a "$LOG_FILE"
 }
 
 # Execute the main function and get started

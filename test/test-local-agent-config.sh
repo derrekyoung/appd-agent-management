@@ -2,7 +2,7 @@
 
 # Put the script into test mode and surpress log output
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/../utils/local-agent-config.sh" "test"
+source "$DIR/../utils/local-agent-config.sh" "silent"
 
 # Set up the test variables
 APPD_AGENT_HOME="$DIR/tmp"

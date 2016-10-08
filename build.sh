@@ -37,9 +37,7 @@ declare -a FILES=("README.md" \
     "conf/remote-hosts/sample.json" \
     "utils/fabfile.py" \
     "utils/latest-appdynamics-version.txt" \
-    "utils/local-agent-config.sh" \
-    "utils/offline-pip.sh" \
-    "utils/utilities.sh")
+    "utils/offline-pip.sh")
 
 copy-files() {
     for file in "${FILES[@]}"
