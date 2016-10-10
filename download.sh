@@ -389,11 +389,11 @@ build-url() {
     # EUM
     if [[ "$DESIRED_TYPE" == "$PARAM_EUM" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_LINUX" ]]; then
-        URL="$URL_CPP_AGENT_LINUX_64"
+        URL="$URL_EUM_SERVER_LINUX_64"
 
     elif [[ "$DESIRED_TYPE" == "$PARAM_EUM" ]] \
     && [[ "$DESIRED_OS" == "$PARAM_WINDOWS" ]]; then
-        URL="$URL_CPP_AGENT_WINDOWS_64"
+        URL="$URL_EUM_SERVER_WINDOWS_64"
     fi
 
     log-debug "Determined URL='$URL'"
