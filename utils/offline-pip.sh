@@ -78,6 +78,12 @@ parse-args() {
 # Download and package dependencies
 # https://pip.pypa.io/en/latest/user_guide/#installing-from-local-packages
 download() {
+    local pip=$(which pip)
+    if [[ -z "$pip" ]]; then
+        log-error "Pip is required to download the dependencies. Exiting."
+        exit 1
+    fi
+
     log-info "Downloading $PACKAGE_NAME and dependencies"
 
     if [[ -d "$PIP_CACHE" ]]; then
