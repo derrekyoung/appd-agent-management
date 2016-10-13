@@ -68,8 +68,8 @@ curl -LOk https://github.com/derrekyoung/appd-agent-management/releases/download
 Fork/clone this repository or [download a full, zipped release](https://github.com/derrekyoung/appd-agent-management/releases/latest).
 
 Individual, direct downloads:
-* [download.sh](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/download.sh)
-* [local-agent-install.sh](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/local-agent-install.sh)
+* [download.sh](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/download.sh) or `curl -LOk https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/download.sh`
+* [local-agent-install.sh](https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/local-agent-install.sh) or `curl -LOk https://raw.githubusercontent.com/derrekyoung/appd-agent-management/master/local-agent-install.sh`
 
 # Install/Upgrade Local Agent
 Install a brand new agent or upgrade a new agent in place. Upgrades will sync existing configurations and settings. Operates on your local system.
