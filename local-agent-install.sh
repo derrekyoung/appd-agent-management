@@ -77,7 +77,7 @@ usage() {
     echo -e "\nOptional params:"
     echo -e "    -a|--archive= Agent archive"
     echo -e "    -h|--appdhome= Local AppDynamics home directory"
-    echo -e "    -c|--agentconfig= (Optional) Agent properties configuration file"
+    echo -e "    -c|--agentconfig= (Optional) Agent properties configuration file. Pass in 'silent' to skip the config."
     echo -e "    --help  Print usage"
 }
 
