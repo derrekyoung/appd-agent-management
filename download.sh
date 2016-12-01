@@ -16,7 +16,7 @@ set -ea
 EMAIL=""
 
 # Flag to toggle debug logging. Values= true|false
-DEBUG_LOGS=true
+DEBUG_LOGS=false
 
 ################################################################################
 # Do Not Edit Below This Line
@@ -41,17 +41,32 @@ DESIRED_FORMAT=""
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 usage() {
-    echo -e "Download AppDynamics software including agents and platform components. Pass in no artuments to be prompted for input."
+    echo -e "download.sh - Download AppDynamics software including agents and platform components. Pass in no artuments to be prompted for input."
     echo -e "Usage: $0"
     echo -e "\nOptional arguments:"
     echo -e "    -e=|--email=  AppDynamics username"
     echo -e "    -p=|--password=  AppDynamics password"
-    echo -e "    -v=|--version=  Version, default to the latest version"
+    echo -e "    -v=|--version=  Version to download. Not specifying will prompt for version (defaulting to latest) (specify 'latest' to retrieve the latest version available ie: -v=latest)"
     echo -e "    -t=|--type=  Type of software {$PARAM_DATABASE, $PARAM_JAVA, $PARAM_MACHINE, $PARAM_PHP, $PARAM_DOTNET, $PARAM_APACHE, $PARAM_ANALYTICS, $PARAM_MOBILE, $PARAM_CPLUSPLUS, $PARAM_CONTROLLER, $PARAM_EUM, $PARAM_EVENTS_SERVICE}"
     echo -e "    -o=|--os=  JVM type or OS type {$PARAM_SUN, $PARAM_IBM, $PARAM_LINUX, $PARAM_WINDOWS, $PARAM_OSX, $PARAM_ANDROID, $PARAM_IOS}"
     echo -e "    -b=|--bitness=  Bitness {$PARAM_32BIT, $PARAM_64BIT}"
     echo -e "    -f=|--format=  Format {$PARAM_ZIP, $PARAM_RPM}"
     echo -e "    --help  Print usage"
+	echo -e ""
+	echo -e " Examples:"
+	echo -e "    o Latest App Server Agent Sun JDK version (ZIP version)"
+	echo -e "      download.sh -v=latest -e=first.last@example.com -t=java -o=sun -f=zip"
+	echo -e " "
+	echo -e "    o Latest Machine Agent Linux 64bit version (ZIP version)"
+	echo -e "      download.sh -v=latest -e=first.last@example.com -t=machine -o=linux -b=64 -f=zip"
+	echo -e " "
+	echo -e "    o Latest Apache Agent Linux 64bit version (TAR version) - prompt for email and password"
+	echo -e "      download.sh -v=latest -t=apache -o=linux -b=64 -f=tar"
+	echo -e " "
+	echo -e "    o Specific AppServer Agent Linux 64bit version (TAR version) - pass password on command line"
+	echo -e "      download.sh -v=4.2.9.2 -e=first.last@example.com -p'passwordhere' -t=java -o=sun -f=tar"
+	echo -e " "
+
 }
 
 main() {
@@ -70,9 +85,15 @@ main() {
     parse-args "$@"
     prompt-for-credentials
 
+	# Check if the user specified the version or not.
+	# User did not specify version, prompt them for it.
     if [[ -z "$DESIRED_VERSION" ]]; then
         set-latest-appd-version
         prompt-for-version
+	# User specified version, but used keyword latest to retrieve whatever the latest is.
+	elif [[ "$DESIRED_VERSION" == "latest" ]]; then
+        set-latest-appd-version
+		DESIRED_VERSION=$LATEST_APPD_VERSION
     fi
 
     prompt-for-type
