@@ -52,20 +52,20 @@ usage() {
     echo -e "    -b=|--bitness=  Bitness {$PARAM_32BIT, $PARAM_64BIT}"
     echo -e "    -f=|--format=  Format {$PARAM_ZIP, $PARAM_RPM}"
     echo -e "    --help  Print usage"
-	echo -e ""
-	echo -e " Examples:"
-	echo -e "    o Latest App Server Agent Sun JDK version (ZIP version)"
-	echo -e "      download.sh -v=latest -e=first.last@example.com -t=java -o=sun -f=zip"
-	echo -e " "
-	echo -e "    o Latest Machine Agent Linux 64bit version (ZIP version)"
-	echo -e "      download.sh -v=latest -e=first.last@example.com -t=machine -o=linux -b=64 -f=zip"
-	echo -e " "
-	echo -e "    o Latest Apache Agent Linux 64bit version (TAR version) - prompt for email and password"
-	echo -e "      download.sh -v=latest -t=apache -o=linux -b=64 -f=tar"
-	echo -e " "
-	echo -e "    o Specific AppServer Agent Linux 64bit version (TAR version) - pass password on command line"
-	echo -e "      download.sh -v=4.2.9.2 -e=first.last@example.com -p'passwordhere' -t=java -o=sun -f=tar"
-	echo -e " "
+    echo -e ""
+    echo -e " Examples:"
+    echo -e "    o Latest App Server Agent Sun JDK version (ZIP version)"
+    echo -e "      download.sh -v=latest -e=first.last@example.com -t=java -o=sun -f=zip"
+    echo -e " "
+    echo -e "    o Latest Machine Agent Linux 64bit version (ZIP version)"
+    echo -e "      download.sh -v=latest -e=first.last@example.com -t=machine -o=linux -b=64 -f=zip"
+    echo -e " "
+    echo -e "    o Latest Apache Agent Linux 64bit version (TAR version) - prompt for email and password"
+    echo -e "      download.sh -v=latest -t=apache -o=linux -b=64 -f=tar"
+    echo -e " "
+    echo -e "    o Specific AppServer Agent Linux 64bit version (TAR version) - pass password on command line"
+    echo -e "      download.sh -v=4.2.9.2 -e=first.last@example.com -p'passwordhere' -t=java -o=sun -f=tar"
+    echo -e " "
 
 }
 
@@ -85,15 +85,15 @@ main() {
     parse-args "$@"
     prompt-for-credentials
 
-	# Check if the user specified the version or not.
-	# User did not specify version, prompt them for it.
+    # Check if the user specified the version or not.
+    # User did not specify version, prompt them for it.
     if [[ -z "$DESIRED_VERSION" ]]; then
         set-latest-appd-version
         prompt-for-version
-	# User specified version, but used keyword latest to retrieve whatever the latest is.
-	elif [[ "$DESIRED_VERSION" == "latest" ]]; then
+    # User specified version, but used keyword "latest" to retrieve whatever the latest is.
+    elif [[ "$DESIRED_VERSION" == "latest" ]]; then
         set-latest-appd-version
-		DESIRED_VERSION=$LATEST_APPD_VERSION
+        DESIRED_VERSION=$LATEST_APPD_VERSION
     fi
 
     prompt-for-type
